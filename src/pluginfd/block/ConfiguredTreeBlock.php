@@ -23,11 +23,15 @@ use pocketmine\data\bedrock\block\convert\BlockStateReader;
 use pocketmine\data\bedrock\block\convert\BlockStateWriter;
 use pocketmine\data\runtime\RuntimeDataDescriber;
 
+use customiesdevs\customies\block\permutations\BlockPermutations;
+use customiesdevs\customies\block\permutations\BlockPermutationsTrait;
+
 use InvalidArgumentException;
 
-final class ConfiguredTreeBlock extends Block implements BlockComponents{
+final class ConfiguredTreeBlock extends Block implements BlockComponents, BlockPermutations{
 
     use BlockComponentsTrait;
+	use BlockPermutationsTrait;
 
     private bool $gravity;
 

@@ -48,12 +48,7 @@ final class TreeBlockRegistrar{
             $hardness=(float)$materialData["hardness"];
             $gravity=(bool)($materialData["gravity"] ?? false);
 
-            $blockMaterials=TreeMaterialCatalog::create($materialKey);
-            $hasStripped=(bool)($materialData["stripped"] ?? false);
-
-            $strippedMaterials=$hasStripped
-                ? TreeMaterialCatalog::create($materialKey,true)
-                : [];
+			$hasStripped=(bool)($materialData["stripped"] ?? false);
 
             foreach($variants as $variantKey=>$variantData){
                 $blockName=$materialData["name"]." ".$variantData["name"];
@@ -68,8 +63,8 @@ final class TreeBlockRegistrar{
                     $blockName,
                     $hardness,
                     $gravity,
-                    $blockMaterials,
-                    "",
+					false,
+					"",
 					$strippedBlockIdentifier
                 );
 
@@ -94,7 +89,7 @@ final class TreeBlockRegistrar{
                         $blockName." без коры",
                         $hardness,
                         $gravity,
-                        $strippedMaterials,
+                        true,
                         "_stripped",
 						null
                     );
@@ -130,8 +125,8 @@ final class TreeBlockRegistrar{
         string $blockName,
         float $hardness,
         bool $gravity,
-        array $materials,
-        string $suffix,
+		bool $stripped,
+		string $suffix,
 		?string $strippedBlockIdentifier
     ): void{
         $blockIdentifier=
@@ -140,27 +135,30 @@ final class TreeBlockRegistrar{
         $blockId=BlockTypeIds::newId();
 
         CustomiesBlockFactory::getInstance()->registerBlock(
-            static function() use(
-                $blockId,
-                $variantData,
-                $blockName,
-                $hardness,
-                $gravity,
-                $materials,
+			static function() use(
+				$blockId,
+				$variantData,
+				$blockName,
+				$hardness,
+				$gravity,
+				$materialKey,
+				$stripped,
 				$strippedBlockIdentifier
-            ): ConfiguredTreeBlock{
-                return new ConfiguredTreeBlock(
-                    new BlockIdentifier($blockId),
-                    [
-                        ...$variantData,
-                        "name"=>$blockName
-                    ],
-                    $materials,
-                    $hardness,
-                    $gravity,
+			): ConfiguredTreeBlock{
+				$materials=TreeMaterialCatalog::create($materialKey,$stripped);
+
+				return new ConfiguredTreeBlock(
+					new BlockIdentifier($blockId),
+					[
+						...$variantData,
+						"name"=>$blockName
+					],
+					$materials,
+					$hardness,
+					$gravity,
 					$strippedBlockIdentifier
-                );
-            },
+				);
+			},
             $blockIdentifier,
             new CreativeInventoryInfo(
                 CreativeInventoryInfo::CATEGORY_ALL
