@@ -145,7 +145,11 @@ final class TreeBlockRegistrar{
 				$stripped,
 				$strippedBlockIdentifier
 			): ConfiguredTreeBlock{
-				$materials=TreeMaterialCatalog::create($materialKey,$stripped);
+				$materials=TreeMaterialCatalog::create(
+					$materialKey,
+					$stripped,
+					$variantData["texture_suffix"] ?? ""
+				);
 
 				return new ConfiguredTreeBlock(
 					new BlockIdentifier($blockId),

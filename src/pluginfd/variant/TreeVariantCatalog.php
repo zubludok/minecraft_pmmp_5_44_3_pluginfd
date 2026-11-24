@@ -194,26 +194,27 @@ final class TreeVariantCatalog{
 			
             /* Дупло
              * Переключение направления. */
-            "hollow" => [
-                "name" => "Дупло",
-                "geometry" => "geometry.tree.hollow",
-                "bone_groups" => [
-                    "variants" => [
-                        "type" => "required_direction",
-                        "state" => "direction_mask",
-                        "bones" => [
-                            "hollow_n",
-                            "hollow_e",
-                            "hollow_s",
-                            "hollow_w"
-                        ],
-                        "debug" => [
-                            "tool" => "stick",
-                            "action" => "cycle"
-                        ]
-                    ]
-                ]
-            ]
+			"hollow" => [
+				"name" => "Дупло",
+				"geometry" => "geometry.tree.hollow",
+				"texture_suffix" => "_hollow",	/* Для регистрации особенных блоков со своей текстурой */
+				"bone_groups" => [
+					"variants" => [
+						"type" => "required_direction",
+						"state" => "direction_mask",
+						"bones" => [
+							"hollow_n",
+							"hollow_e",
+							"hollow_s",
+							"hollow_w"
+						],
+						"debug" => [
+							"tool" => "stick",
+							"action" => "cycle"
+						]
+					]
+				]
+			]
         ];
     }
 }

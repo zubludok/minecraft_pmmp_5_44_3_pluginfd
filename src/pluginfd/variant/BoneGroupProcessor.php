@@ -73,7 +73,22 @@ final class BoneGroupProcessor{
                         "default" => 0
                     ]);
                     break;
+					
+				case "required_direction":
+					if(count($bones) !== 4){
+						throw new InvalidArgumentException(
+							"Direction group '$groupName' must have exactly four bones"
+						);
+					}
 
+					self::registerState($states,$state,[
+						"type"=>"int",
+						"min"=>0,
+						"max"=>3,
+						"default"=>0
+					]);
+					break;
+					
                 case "optional_choice":
                     self::registerState($states, $state, [
                         "type" => "int",
@@ -145,6 +160,12 @@ final class BoneGroupProcessor{
                             "($stateExpression == $index)";
                     }
                     break;
+				
+				case "required_direction":
+					foreach($bones as $index=>$bone){
+						$visibility[$bone]="($stateExpression == $index)";
+					}
+					break;
 
                 case "optional_choice":
                     foreach($bones as $index => $bone){
