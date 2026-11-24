@@ -67,9 +67,11 @@ final class ConfiguredTreeBlockInteraction{
                 continue;
             }
 
-            if(!$this->applyAction($block,$debugAction)){
-                continue;
-            }
+			$reverse=$tool === "stick" && $event->getPlayer()->isSneaking();
+
+			if(!$this->applyAction($block,$debugAction,$reverse)){
+				continue;
+			}
 
             $event->cancel();
 
@@ -156,10 +158,11 @@ final class ConfiguredTreeBlockInteraction{
      *     max: int
      * } $debugAction
      */
-    private function applyAction(
-        ConfiguredTreeBlock $block,
-        array $debugAction
-    ): bool{
+	private function applyAction(
+		ConfiguredTreeBlock $block,
+		array $debugAction,
+		bool $reverse=false
+	): bool{
 
         $state=$debugAction["state"];
         $action=$debugAction["action"];
@@ -168,22 +171,28 @@ final class ConfiguredTreeBlockInteraction{
 
         switch($action){
 
-            case "cycle":
+			case "cycle":
 
-                if(!is_int($current)){
-                    return false;
-                }
+				if(!is_int($current)){
+					return false;
+				}
 
-                $min=$debugAction["min"];
-                $max=$debugAction["max"];
+				$min=$debugAction["min"];
+				$max=$debugAction["max"];
 
-                $next=$current >= $max
-                    ? $min
-                    : $current+1;
+				if($reverse){
+					$next=$current <= $min
+						? $max
+						: $current-1;
+				}else{
+					$next=$current >= $max
+						? $min
+						: $current+1;
+				}
 
-                $block->setState($state,$next);
+				$block->setState($state,$next);
 
-                return true;
+				return true;
 
             case "toggle":
 
