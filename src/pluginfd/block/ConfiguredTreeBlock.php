@@ -84,20 +84,20 @@ final class ConfiguredTreeBlock extends Block implements BlockComponents, BlockP
 			$this->stateValues[$name] = $definition["default"];
 		}
 
-		// 3. Теперь PocketMine сможет правильно определить размер Runtime ID.
+		// 3. Материалы коры должны быть назначены до конструктора PocketMine.
+		$this->strippedMaterials=$strippedMaterials;
+
+		// 4. PocketMine определяет размер Runtime ID.
 		parent::__construct(
 			$identifier,
 			$variant["name"],
 			new BlockTypeInfo(new BlockBreakInfo($hardness))
 		);
 
-		$this->gravity = $gravity;
+		$this->gravity=$gravity;
 
-		// 4. Регистрируем состояния Customies.
+		// 5. Регистрируем состояния Customies.
 		$this->registerStates();
-		
-		// 5. Регистрируем состояние коры
-		$this->strippedMaterials=$strippedMaterials;
 		
 		// 6. Подключаем компоненты.
 		$this->initComponents($geometry, $materials);
