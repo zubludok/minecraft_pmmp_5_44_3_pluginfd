@@ -11,6 +11,7 @@ use pluginfd\block\ConfiguredTreeBlock;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\item\Item;
 use pocketmine\item\VanillaItems;
+use pocketmine\math\Facing;
 
 final class ConfiguredTreeBlockInteraction{
 
@@ -59,7 +60,45 @@ final class ConfiguredTreeBlockInteraction{
 
             return;
         }
+		
+		// Переключение веток мотыгой.
+		if($tool === "hoe"){
 
+			$groupName=match($event->getFace()){
+				BlockFace::NORTH=>"branch_north",
+				BlockFace::SOUTH=>"branch_south",
+				BlockFace::EAST=>"branch_east",
+				BlockFace::WEST=>"branch_west",
+				default=>null
+			};
+
+			if($groupName === null){
+				return;
+			}
+
+			$debugAction=$block->getDebugActions()[$groupName] ?? null;
+
+			if(
+				!is_array($debugAction) ||
+				$debugAction["tool"] !== "hoe"
+			){
+				return;
+			}
+
+			if(!$this->applyAction($block,$debugAction)){
+				return;
+			}
+
+			$event->cancel();
+
+			$block->getPosition()->getWorld()->setBlock(
+				$block->getPosition(),
+				$block
+			);
+
+			return;
+		}
+		
         // Остальные действия с деревом.
         foreach($block->getDebugActions() as $debugAction){
 
@@ -111,7 +150,23 @@ final class ConfiguredTreeBlockInteraction{
                 return "axe";
             }
         }
+		
+		// Мотыги.
+		$hoes=[
+			VanillaItems::WOODEN_HOE(),
+			VanillaItems::STONE_HOE(),
+			VanillaItems::IRON_HOE(),
+			VanillaItems::GOLDEN_HOE(),
+			VanillaItems::DIAMOND_HOE(),
+			VanillaItems::NETHERITE_HOE()
+		];
 
+		foreach($hoes as $hoe){
+			if($itemId === $hoe->getTypeId()){
+				return "hoe";
+			}
+		}
+		
         // Лопаты.
         $shovels=[
             VanillaItems::WOODEN_SHOVEL(),

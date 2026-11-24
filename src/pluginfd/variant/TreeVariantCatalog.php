@@ -88,6 +88,10 @@ final class TreeVariantCatalog{
 						"bones" => [
 							"branch_north_thin",
 							"branch_north_thick"
+						],
+						"debug" => [
+							"tool" => "hoe",
+							"action" => "cycle"
 						]
 					],
 
@@ -98,6 +102,10 @@ final class TreeVariantCatalog{
 						"bones" => [
 							"branch_south_thin",
 							"branch_south_thick"
+						],
+						"debug" => [
+							"tool" => "hoe",
+							"action" => "cycle"
 						]
 					],
 
@@ -108,6 +116,10 @@ final class TreeVariantCatalog{
 						"bones" => [
 							"branch_east_thin",
 							"branch_east_thick"
+						],
+						"debug" => [
+							"tool" => "hoe",
+							"action" => "cycle"
 						]
 					],
 
@@ -118,6 +130,10 @@ final class TreeVariantCatalog{
 						"bones" => [
 							"branch_west_thin",
 							"branch_west_thick"
+						],
+						"debug" => [
+							"tool" => "hoe",
+							"action" => "cycle"
 						]
 					]
 				]

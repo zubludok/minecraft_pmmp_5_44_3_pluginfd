@@ -249,7 +249,7 @@ final class BoneGroupProcessor{
             $tool = $debug["tool"] ?? null;
             $action = $debug["action"] ?? null;
 
-            if(!in_array($tool, ["stick", "axe", "shovel", "sword"], true)){
+            if(!in_array($tool, ["stick", "axe", "shovel", "sword", "hoe"], true)){
                 throw new InvalidArgumentException(
                     "Unknown debug tool in group '$groupName'"
                 );
