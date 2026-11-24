@@ -52,41 +52,38 @@ final class TreeBlockRegistrar{
                 $hardness = (float) $materialData["hardness"];
                 $gravity = (bool) ($materialData["gravity"] ?? false);
 
-                $blockId = BlockTypeIds::newId();
+				$blockId=BlockTypeIds::newId();
 
-                CustomiesBlockFactory::getInstance()->registerBlock(
-                    static function() use (
-                        $blockId,
-                        $variantData,
-                        $blockName,
-                        $hardness,
-                        $gravity,
-                        $materialKey,
+				$blockMaterials=TreeMaterialCatalog::create($materialKey);
+				$strippedMaterials=($materialData["stripped"] ?? false)
+					? TreeMaterialCatalog::create($materialKey,true)
+					: [];
+
+				CustomiesBlockFactory::getInstance()->registerBlock(
+					static function() use (
+						$blockId,
+						$variantData,
+						$blockName,
+						$hardness,
+						$gravity,
+						$blockMaterials,
 						$strippedMaterials
-                    ): ConfiguredTreeBlock{
-
-                        $blockMaterials=TreeMaterialCatalog::create($materialKey);
-						$strippedMaterials=($materialData["stripped"] ?? false)
-							? TreeMaterialCatalog::create($materialKey,true)
-							: [];
-
-                        return new ConfiguredTreeBlock(
-                            new BlockIdentifier($blockId),
-                            [
-                                ...$variantData,
-                                "name" => $blockName
-                            ],
+					): ConfiguredTreeBlock{
+						return new ConfiguredTreeBlock(
+							new BlockIdentifier($blockId),
+							[
+								...$variantData,
+								"name"=>$blockName
+							],
 							$blockMaterials,
 							$strippedMaterials,
 							$hardness,
 							$gravity
-                        );
-                    },
-                    $blockIdentifier,
-                    new CreativeInventoryInfo(
-                        CreativeInventoryInfo::CATEGORY_ALL
-                    )
-                );
+						);
+					},
+					$blockIdentifier,
+					new CreativeInventoryInfo(CreativeInventoryInfo::CATEGORY_ALL)
+				);
 
                 $itemIdentifier =
                     "pluginfd:place_" . $family . "_" . $materialKey . "_" . $variantKey;

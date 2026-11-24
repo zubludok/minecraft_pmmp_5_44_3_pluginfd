@@ -57,9 +57,9 @@ final class ConfiguredTreeBlock extends Block implements BlockComponents, BlockP
 		BlockIdentifier $identifier,
 		array $variant,
 		array $materials,
+		array $strippedMaterials,
 		float $hardness,
-		bool $gravity,
-		array $strippedMaterials
+		bool $gravity
 	){
 		$geometry = $variant["geometry"] ?? null;
 		$groups = $variant["bone_groups"] ?? null;
@@ -148,9 +148,6 @@ final class ConfiguredTreeBlock extends Block implements BlockComponents, BlockP
 					"Unsupported state type '$type'"
 				);
 			}
-		}
-		if($this->strippedMaterials !== []){
-			$out->writeBool("pluginfd:bark",$this->bark);
 		}
 	}
 	
@@ -269,6 +266,9 @@ final class ConfiguredTreeBlock extends Block implements BlockComponents, BlockP
                 $out->writeBool($stateName, $value);
             }
         }
+		if($this->strippedMaterials !== []){
+			$out->writeBool("pluginfd:bark",$this->bark);
+		}
     }
 
     /**
