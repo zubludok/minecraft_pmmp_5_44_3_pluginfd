@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace pluginfd\interaction;
 
+use customiesdevs\customies\block\CustomiesBlockFactory;
+
 use pluginfd\block\ConfiguredTreeBlock;
 
 use pocketmine\event\player\PlayerInteractEvent;
@@ -21,34 +23,51 @@ final class ConfiguredTreeBlockInteraction{
             return;
         }
 
-        $block = $event->getBlock();
+        $block=$event->getBlock();
 
         if(!$block instanceof ConfiguredTreeBlock){
             return;
         }
 
-        $tool = $this->getTool($event->getItem());
+        $tool=$this->getTool($event->getItem());
 
-		if($tool === "axe" && $block->hasStrippedMaterial()){
-			$block->setBark(!$block->hasBark());
+        // Снятие коры топором.
+        if($tool === "axe"){
+            $strippedIdentifier=$block->getStrippedBlockIdentifier();
 
-			$event->cancel();
+            if($strippedIdentifier === null){
+                return;
+            }
 
-			$block->getPosition()->getWorld()->setBlock(
-				$block->getPosition(),
-				$block
-			);
+            $strippedBlock=CustomiesBlockFactory::getInstance()->get(
+                $strippedIdentifier
+            );
 
-			return;
-		}
+            if(!$strippedBlock instanceof ConfiguredTreeBlock){
+                return;
+            }
 
+            // Переносим толщину и состояния веток.
+            $block->copyStatesTo($strippedBlock);
+
+            $event->cancel();
+
+            $block->getPosition()->getWorld()->setBlock(
+                $block->getPosition(),
+                $strippedBlock
+            );
+
+            return;
+        }
+
+        // Остальные действия с деревом.
         foreach($block->getDebugActions() as $debugAction){
 
             if($debugAction["tool"] !== $tool){
                 continue;
             }
 
-            if(!$this->applyAction($block, $debugAction)){
+            if(!$this->applyAction($block,$debugAction)){
                 continue;
             }
 
@@ -68,7 +87,7 @@ final class ConfiguredTreeBlockInteraction{
      */
     private function getTool(Item $item): ?string{
 
-        $itemId = $item->getTypeId();
+        $itemId=$item->getTypeId();
 
         // Палка.
         if($itemId === VanillaItems::STICK()->getTypeId()){
@@ -76,7 +95,7 @@ final class ConfiguredTreeBlockInteraction{
         }
 
         // Топоры.
-        $axes = [
+        $axes=[
             VanillaItems::WOODEN_AXE(),
             VanillaItems::STONE_AXE(),
             VanillaItems::IRON_AXE(),
@@ -92,7 +111,7 @@ final class ConfiguredTreeBlockInteraction{
         }
 
         // Лопаты.
-        $shovels = [
+        $shovels=[
             VanillaItems::WOODEN_SHOVEL(),
             VanillaItems::STONE_SHOVEL(),
             VanillaItems::IRON_SHOVEL(),
@@ -108,7 +127,7 @@ final class ConfiguredTreeBlockInteraction{
         }
 
         // Мечи.
-        $swords = [
+        $swords=[
             VanillaItems::WOODEN_SWORD(),
             VanillaItems::STONE_SWORD(),
             VanillaItems::IRON_SWORD(),
@@ -142,10 +161,10 @@ final class ConfiguredTreeBlockInteraction{
         array $debugAction
     ): bool{
 
-        $state = $debugAction["state"];
-        $action = $debugAction["action"];
+        $state=$debugAction["state"];
+        $action=$debugAction["action"];
 
-        $current = $block->getStateValue($state);
+        $current=$block->getStateValue($state);
 
         switch($action){
 
@@ -155,14 +174,14 @@ final class ConfiguredTreeBlockInteraction{
                     return false;
                 }
 
-                $min = $debugAction["min"];
-                $max = $debugAction["max"];
+                $min=$debugAction["min"];
+                $max=$debugAction["max"];
 
-                $next = $current >= $max
+                $next=$current >= $max
                     ? $min
-                    : $current + 1;
+                    : $current+1;
 
-                $block->setState($state, $next);
+                $block->setState($state,$next);
 
                 return true;
 
@@ -172,7 +191,7 @@ final class ConfiguredTreeBlockInteraction{
                     return false;
                 }
 
-                $block->setState($state, !$current);
+                $block->setState($state,!$current);
 
                 return true;
 
@@ -182,16 +201,14 @@ final class ConfiguredTreeBlockInteraction{
                     return false;
                 }
 
-                $min = $debugAction["min"];
-                $max = $debugAction["max"];
+                $min=$debugAction["min"];
+                $max=$debugAction["max"];
 
-                // Если все кости включены — выключаем их.
-                // Иначе включаем все.
-                $next = $current === $max
+                $next=$current === $max
                     ? $min
                     : $max;
 
-                $block->setState($state, $next);
+                $block->setState($state,$next);
 
                 return true;
         }

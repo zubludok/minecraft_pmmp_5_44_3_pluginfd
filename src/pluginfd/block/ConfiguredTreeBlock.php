@@ -42,44 +42,40 @@ final class ConfiguredTreeBlock extends Block implements BlockComponents{
 
     /** @var array<string, array<string, mixed>> */
     private array $debugActions=[];
-
+	
+	private ?string $strippedBlockIdentifier;
+	
     /** @param Material[] $materials */
     public function __construct(
         BlockIdentifier $identifier,
         array $variant,
         array $materials,
         float $hardness,
-        bool $gravity
+        bool $gravity,
+		?string $strippedBlockIdentifier=null
     ){
         $geometry=$variant["geometry"] ?? null;
         $groups=$variant["bone_groups"] ?? null;
-
         if(!is_string($geometry) || $geometry === ""){
             throw new InvalidArgumentException("Tree variant has no geometry");
         }
-
         if(!is_array($groups)){
             throw new InvalidArgumentException("Tree variant has no bone_groups");
         }
-
         $processed=BoneGroupProcessor::process($groups);
-
         $this->stateDefinitions=$processed["states"];
         $this->boneVisibility=$processed["visibility"];
         $this->debugActions=$processed["debug"];
-
         foreach($this->stateDefinitions as $name=>$definition){
             $this->stateValues[$name]=$definition["default"];
         }
-
         parent::__construct(
             $identifier,
             $variant["name"],
             new BlockTypeInfo(new BlockBreakInfo($hardness))
         );
-
+		$this->strippedBlockIdentifier=$strippedBlockIdentifier;
         $this->gravity=$gravity;
-
         $this->registerStates();
         $this->initComponents($geometry,$materials);
     }
@@ -240,4 +236,14 @@ final class ConfiguredTreeBlock extends Block implements BlockComponents{
     public function getDebugActions(): array{
         return $this->debugActions;
     }
+	
+	public function getStrippedBlockIdentifier(): ?string{
+		return $this->strippedBlockIdentifier;
+	}
+
+	public function copyStatesTo(self $target): void{
+		foreach($this->stateValues as $name=>$value){
+			$target->setState($name,$value);
+		}
+	}
 }

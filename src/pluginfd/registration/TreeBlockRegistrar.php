@@ -57,7 +57,9 @@ final class TreeBlockRegistrar{
 
             foreach($variants as $variantKey=>$variantData){
                 $blockName=$materialData["name"]." ".$variantData["name"];
-
+				$strippedBlockIdentifier=$hasStripped
+					? "pluginfd:".$family."_".$materialKey."_".$variantKey."_stripped"
+					: null;
                 self::registerOne(
                     $family,
                     $materialKey,
@@ -67,7 +69,8 @@ final class TreeBlockRegistrar{
                     $hardness,
                     $gravity,
                     $blockMaterials,
-                    ""
+                    "",
+					$strippedBlockIdentifier
                 );
 
                 ++$registered;
@@ -92,7 +95,8 @@ final class TreeBlockRegistrar{
                         $hardness,
                         $gravity,
                         $strippedMaterials,
-                        "_stripped"
+                        "_stripped",
+						null
                     );
 
                     ++$registered;
@@ -127,7 +131,8 @@ final class TreeBlockRegistrar{
         float $hardness,
         bool $gravity,
         array $materials,
-        string $suffix
+        string $suffix,
+		?string $strippedBlockIdentifier
     ): void{
         $blockIdentifier=
             "pluginfd:".$family."_".$materialKey."_".$variantKey.$suffix;
@@ -141,7 +146,8 @@ final class TreeBlockRegistrar{
                 $blockName,
                 $hardness,
                 $gravity,
-                $materials
+                $materials,
+				$strippedBlockIdentifier
             ): ConfiguredTreeBlock{
                 return new ConfiguredTreeBlock(
                     new BlockIdentifier($blockId),
@@ -151,7 +157,8 @@ final class TreeBlockRegistrar{
                     ],
                     $materials,
                     $hardness,
-                    $gravity
+                    $gravity,
+					$strippedBlockIdentifier
                 );
             },
             $blockIdentifier,
