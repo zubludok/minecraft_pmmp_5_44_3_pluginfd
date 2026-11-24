@@ -1,0 +1,12 @@
+name: pluginfd
+description: "Новые блоки для сервера с паком Falling Dirt"
+
+main: pluginfd\pluginfd
+
+version: 1.0.0
+api: 5.43.1
+
+author: Zubludok
+
+depend:
+  - Customies
