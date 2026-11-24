@@ -47,15 +47,19 @@ final class ConfiguredTreeBlock extends Block implements BlockComponents, BlockP
 	/** @var array<string, array<string, mixed>> */
 	private array $debugActions = [];
 	
-    /**
-     * @param Material[] $materials
-     */
+	/** @var Material[] */
+	private array $strippedMaterials = [];
+
+	private bool $bark = true;
+	
+    /* @param Material[] $materials */
 	public function __construct(
 		BlockIdentifier $identifier,
 		array $variant,
 		array $materials,
 		float $hardness,
-		bool $gravity
+		bool $gravity,
+		array $strippedMaterials
 	){
 		$geometry = $variant["geometry"] ?? null;
 		$groups = $variant["bone_groups"] ?? null;
@@ -91,9 +95,27 @@ final class ConfiguredTreeBlock extends Block implements BlockComponents, BlockP
 
 		// 4. Регистрируем состояния Customies.
 		$this->registerStates();
-
-		// 5. Подключаем компоненты.
+		
+		// 5. Регистрируем состояние коры
+		$this->strippedMaterials=$strippedMaterials;
+		
+		// 6. Подключаем компоненты.
 		$this->initComponents($geometry, $materials);
+		
+		if($this->strippedMaterials !== []){
+			$this->addState(
+				new BlockState("pluginfd:bark",[false,true])
+			);
+
+			$this->addPermutation(
+				new BlockPermutation(
+					"q.block_state('pluginfd:bark') == false",
+					[
+						new MaterialInstancesComponent($this->strippedMaterials)
+					]
+				)
+			);
+		}
 	}
 	
 	private function registerStates(): void{
@@ -126,6 +148,9 @@ final class ConfiguredTreeBlock extends Block implements BlockComponents, BlockP
 					"Unsupported state type '$type'"
 				);
 			}
+		}
+		if($this->strippedMaterials !== []){
+			$out->writeBool("pluginfd:bark",$this->bark);
 		}
 	}
 	
@@ -167,9 +192,15 @@ final class ConfiguredTreeBlock extends Block implements BlockComponents, BlockP
     /**
      * Состояния в том же порядке, в котором они зарегистрированы.
      */
-    public function getCurrentStates(): array{
-        return array_values($this->stateValues);
-    }
+	public function getCurrentStates(): array{
+		$states=array_values($this->stateValues);
+
+		if($this->strippedMaterials !== []){
+			$states[]=$this->bark;
+		}
+
+		return $states;
+	}
 
     /**
      * Получить значение состояния.
@@ -258,6 +289,9 @@ final class ConfiguredTreeBlock extends Block implements BlockComponents, BlockP
                 $this->stateValues[$name] = $in->readBool($stateName);
             }
         }
+		if($this->strippedMaterials !== []){
+			$this->bark=$in->readBool("pluginfd:bark");
+		}
     }
 
     /**
@@ -288,6 +322,9 @@ final class ConfiguredTreeBlock extends Block implements BlockComponents, BlockP
 			// Разрываем ссылку перед следующей итерацией.
 			unset($value);
 		}
+		if($this->strippedMaterials !== []){
+			$w->bool($this->bark);
+		}
 	}
 	
 	/**
@@ -296,5 +333,18 @@ final class ConfiguredTreeBlock extends Block implements BlockComponents, BlockP
 	 
 	public function getDebugActions(): array{
 		return $this->debugActions;
+	}
+	
+	public function hasStrippedMaterial(): bool{
+		return $this->strippedMaterials !== [];
+	}
+
+	public function hasBark(): bool{
+		return $this->bark;
+	}
+
+	public function setBark(bool $bark): self{
+		$this->bark=$bark;
+		return $this;
 	}
 }

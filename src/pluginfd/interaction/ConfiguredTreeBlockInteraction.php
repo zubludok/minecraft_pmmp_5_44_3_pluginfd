@@ -29,9 +29,18 @@ final class ConfiguredTreeBlockInteraction{
 
         $tool = $this->getTool($event->getItem());
 
-        if($tool === null){
-            return;
-        }
+		if($tool === "axe" && $block->hasStrippedMaterial()){
+			$block->setBark(!$block->hasBark());
+
+			$event->cancel();
+
+			$block->getPosition()->getWorld()->setBlock(
+				$block->getPosition(),
+				$block
+			);
+
+			return;
+		}
 
         foreach($block->getDebugActions() as $debugAction){
 

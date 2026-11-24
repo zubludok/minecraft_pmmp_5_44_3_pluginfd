@@ -79,8 +79,8 @@ class pluginfd extends PluginBase{
 			"stone" 		=> ["name" => "Stone", 			"hardness" => 1.5, "gravity" => false]
 		];
 		
-		$treeMaterials = [
-			"oak" 			=> ["name" => "Oak", 			"hardness" => 1.5, "gravity" => false]
+		$treeMaterials=[
+			"oak"	=>	["name"	=>	"Oak",	"hardness"	=>	1.5,	"gravity"	=>	false,	"stripped"	=>	true]
 		];
 		
 		$resources = [

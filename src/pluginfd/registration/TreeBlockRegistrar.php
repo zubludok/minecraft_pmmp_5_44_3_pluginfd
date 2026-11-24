@@ -61,12 +61,14 @@ final class TreeBlockRegistrar{
                         $blockName,
                         $hardness,
                         $gravity,
-                        $materialKey
+                        $materialKey,
+						$strippedMaterials
                     ): ConfiguredTreeBlock{
 
-                        $blockMaterials = TreeMaterialCatalog::create(
-                            $materialKey
-                        );
+                        $blockMaterials=TreeMaterialCatalog::create($materialKey);
+						$strippedMaterials=($materialData["stripped"] ?? false)
+							? TreeMaterialCatalog::create($materialKey,true)
+							: [];
 
                         return new ConfiguredTreeBlock(
                             new BlockIdentifier($blockId),
@@ -74,9 +76,10 @@ final class TreeBlockRegistrar{
                                 ...$variantData,
                                 "name" => $blockName
                             ],
-                            $blockMaterials,
-                            $hardness,
-                            $gravity
+							$blockMaterials,
+							$strippedMaterials,
+							$hardness,
+							$gravity
                         );
                     },
                     $blockIdentifier,

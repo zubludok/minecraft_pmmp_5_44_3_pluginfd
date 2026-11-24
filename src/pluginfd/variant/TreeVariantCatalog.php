@@ -9,19 +9,14 @@ final class TreeVariantCatalog{
     public static function getVariants(): array{
         return [
 
-            /*
-             * ПЕНЬ
-             *
+            /* ПЕНЬ
              * Нижняя часть обязательна.
              * Верхняя часть может отсутствовать.
-             * Толщина обеих частей всегда одинаковая.
-             */
+             * Толщина обеих частей всегда "одинаковая". */
             "stump" => [
                 "name" => "Пень",
                 "geometry" => "geometry.tree.stump",
-
                 "bone_groups" => [
-
                     "lower" => [
                         "type" => "required_choice",
                         "state" => "thickness",
@@ -38,7 +33,6 @@ final class TreeVariantCatalog{
                             "action" => "cycle"
                         ]
                     ],
-
                     "upper" => [
                         "type" => "linked_optional",
                         "state" => "thickness",
@@ -53,26 +47,20 @@ final class TreeVariantCatalog{
                             "upper_6"
                         ],
                         "debug" => [
-                            "tool" => "axe",
+                            "tool" => "shovel",
                             "action" => "toggle"
                         ]
                     ]
-
                 ]
             ],
 
 			"trunk" => [
 				"name" => "Ствол",
 				"geometry" => "geometry.tree.trunk",
-
 				"bone_groups" => [
-
-					/*
-					 * ТОЛЩИНА СТВОЛА
-					 *
+					/* ТОЛЩИНА СТВОЛА
 					 * Всегда один из шести вариантов.
-					 * Пустого состояния нет.
-					 */
+					 * Пустого состояния нет. */
 					"thickness" => [
 						"type" => "required_choice",
 						"state" => "thickness",
@@ -90,13 +78,10 @@ final class TreeVariantCatalog{
 						]
 					],
 
-					/*
-					 * СЕВЕРНАЯ ВЕТКА
-					 *
+					/* СЕВЕРНАЯ ВЕТКА
 					 * 0 = отсутствует
 					 * 1 = тонкая
-					 * 2 = толстая
-					 */
+					 * 2 = толстая */
 					"branch_north" => [
 						"type" => "optional_choice",
 						"state" => "branch_north",
@@ -106,9 +91,7 @@ final class TreeVariantCatalog{
 						]
 					],
 
-					/*
-					 * ЮЖНАЯ ВЕТКА
-					 */
+					/* ЮЖНАЯ ВЕТКА */
 					"branch_south" => [
 						"type" => "optional_choice",
 						"state" => "branch_south",
@@ -118,9 +101,7 @@ final class TreeVariantCatalog{
 						]
 					],
 
-					/*
-					 * ВОСТОЧНАЯ ВЕТКА
-					 */
+					/* ВОСТОЧНАЯ ВЕТКА */
 					"branch_east" => [
 						"type" => "optional_choice",
 						"state" => "branch_east",
@@ -130,9 +111,7 @@ final class TreeVariantCatalog{
 						]
 					],
 
-					/*
-					 * ЗАПАДНАЯ ВЕТКА
-					 */
+					/* ЗАПАДНАЯ ВЕТКА */
 					"branch_west" => [
 						"type" => "optional_choice",
 						"state" => "branch_west",
@@ -141,38 +120,77 @@ final class TreeVariantCatalog{
 							"branch_west_thick"
 						]
 					]
-
 				]
 			],
 
-            /*
-             * ВЕТКА
-             *
-             * Каждая кость включается независимо.
-             */
-            "branch" => [
+            /* ВЕТКИ
+             * Каждая кость включается независимо. */
+            "branch_sa" => [
                 "name" => "Ветка",
-                "geometry" => "geometry.tree.branch",
-
+                "geometry" => "geometry.tree.branch_sa",
                 "bone_groups" => [
-
                     "variants" => [
                         "type" => "independent",
                         "state" => "branch_mask",
                         "bones" => [
                             "branch_a",
                             "branch_b",
-                            "branch_c"
+                            "branch_c",
+                            "branch_d",
+                            "branch_e",
+                            "branch_f"
                         ],
                         "debug" => [
                             "tool" => "sword",
                             "action" => "toggle_all"
                         ]
                     ]
-
+                ]
+            ],
+            "branch_sb" => [
+                "name" => "Ветка",
+                "geometry" => "geometry.tree.branch_sb",
+                "bone_groups" => [
+                    "variants" => [
+                        "type" => "independent",
+                        "state" => "branch_mask",
+                        "bones" => [
+                            "branch_a",
+                            "branch_b",
+                            "branch_c",
+                            "branch_d",
+                            "branch_e",
+                            "branch_f"
+                        ],
+                        "debug" => [
+                            "tool" => "sword",
+                            "action" => "toggle_all"
+                        ]
+                    ]
+                ]
+            ],
+            "branch_sc" => [
+                "name" => "Ветка",
+                "geometry" => "geometry.tree.branch_sc",
+                "bone_groups" => [
+                    "variants" => [
+                        "type" => "independent",
+                        "state" => "branch_mask",
+                        "bones" => [
+                            "branch_a",
+                            "branch_b",
+                            "branch_c",
+                            "branch_d",
+                            "branch_e",
+                            "branch_f"
+                        ],
+                        "debug" => [
+                            "tool" => "sword",
+                            "action" => "toggle_all"
+                        ]
+                    ]
                 ]
             ]
-
         ];
     }
 }
