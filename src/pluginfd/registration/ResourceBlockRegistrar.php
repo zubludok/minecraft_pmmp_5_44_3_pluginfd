@@ -44,12 +44,9 @@ final class ResourceBlockRegistrar{
                     $gravity = (bool) ($materialData["gravity"] ?? false);
                     $resourceSize = (float) $resourceVariant["size"];
                     $resourceStyle = $resourceVariant["style"];
-                    $blockMaterials = ResourceMaterialCatalog::create(
-                        $materialKey,
-                        $resourceKey,
-                        $resourceStyle
-                    );
+					$blockStartedAt=microtime(true);
                     $blockId = BlockTypeIds::newId();
+					$blockRegistrationStartedAt=microtime(true);
 					CustomiesBlockFactory::getInstance()->registerBlock(
 						static function() use (
 							$blockId,
@@ -81,9 +78,11 @@ final class ResourceBlockRegistrar{
 						$blockIdentifier,
 						new CreativeInventoryInfo(CreativeInventoryInfo::CATEGORY_ALL)
 					);
+					$blockRegistrationMs=(microtime(true)-$blockRegistrationStartedAt)*1000;
                     $itemIdentifier = "pluginfd:place_".$family."_".$materialKey."_".$resourceKey."_".$variantSuffix;
                     $itemId = ItemTypeIds::newId();
                     $icon = $blockIdentifier;
+					$itemRegistrationStartedAt=microtime(true);
                     CustomiesItemFactory::getInstance()->registerItem(
                         static function() use (
                             $itemId,
@@ -101,7 +100,21 @@ final class ResourceBlockRegistrar{
                         $itemIdentifier,
                         new CreativeInventoryInfo(CreativeInventoryInfo::CATEGORY_CONSTRUCTION)
                     );
+					$itemRegistrationMs=(microtime(true)-$itemRegistrationStartedAt)*1000;
                     ++$registered;
+					$totalMs=(microtime(true)-$blockStartedAt)*1000;
+					$elapsed=round(microtime(true)-$startTime,2);
+
+					$progress?->__invoke(sprintf(
+						"[{$family}] %d/%d | %s | блок: %.2f мс | предмет: %.2f мс | всего: %.2f мс | с начала: %.2f сек.",
+						$registered,
+						$total,
+						$blockIdentifier,
+						$blockRegistrationMs,
+						$itemRegistrationMs,
+						$totalMs,
+						$elapsed
+					));
                     if($logEvery > 0 && $registered % $logEvery === 0){
                         $elapsed = round(microtime(true) - $startTime, 2);
                         $progress?->__invoke("[{$family}] {$registered}/{$total} | "."{$materialKey} + {$resourceKey} | "."{$elapsed} сек.");

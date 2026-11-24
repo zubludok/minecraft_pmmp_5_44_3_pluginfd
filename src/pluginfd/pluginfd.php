@@ -114,14 +114,14 @@ class pluginfd extends PluginBase{
 		);
 
 		// Регистрация ресурсных воксельных блоков.
-/* 		ResourceBlockRegistrar::registerFamily(
+		ResourceBlockRegistrar::registerFamily(
 			"resource",
 			$materialsres,
 			$resources,
 			ResourceVoxelCatalog::getVariants(),
 			$progress,
 			10
-		); */
+		);
 		
 		TreeBlockRegistrar::registerFamily(
 			"tree",
