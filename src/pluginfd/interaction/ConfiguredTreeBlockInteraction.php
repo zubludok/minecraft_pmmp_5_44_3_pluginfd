@@ -65,10 +65,10 @@ final class ConfiguredTreeBlockInteraction{
 		if($tool === "hoe"){
 
 			$groupName=match($event->getFace()){
-				BlockFace::NORTH=>"branch_north",
-				BlockFace::SOUTH=>"branch_south",
-				BlockFace::EAST=>"branch_east",
-				BlockFace::WEST=>"branch_west",
+				Facing::NORTH=>"branch_north",
+				Facing::SOUTH=>"branch_south",
+				Facing::EAST=>"branch_east",
+				Facing::WEST=>"branch_west",
 				default=>null
 			};
 
