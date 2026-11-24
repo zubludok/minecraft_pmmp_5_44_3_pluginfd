@@ -23,120 +23,187 @@ final class TreeBlockRegistrar{
         string $family,
         array $materials,
         array $variants,
-        ?callable $progress = null,
-        int $logEvery = 10
+        ?callable $progress=null,
+        int $logEvery=10
     ): void{
+        $total=0;
 
-        $total = count($materials) * count($variants);
-        $registered = 0;
-        $startTime = microtime(true);
+        foreach($materials as $materialData){
+            $multiplier=($materialData["stripped"] ?? false) ? 2 : 1;
+            $total+=count($variants)*$multiplier;
+        }
+
+        $registered=0;
+        $startTime=microtime(true);
 
         $progress?->__invoke(
             "Начало регистрации {$family}. Всего блоков: {$total}"
         );
 
-        foreach($materials as $materialKey => $materialData){
-
+        foreach($materials as $materialKey=>$materialData){
             $progress?->__invoke(
                 "Обработка материала: {$materialKey}"
             );
 
-            foreach($variants as $variantKey => $variantData){
+            $hardness=(float)$materialData["hardness"];
+            $gravity=(bool)($materialData["gravity"] ?? false);
 
-                $blockIdentifier =
-                    "pluginfd:" . $family . "_" . $materialKey . "_" . $variantKey;
+            $blockMaterials=TreeMaterialCatalog::create($materialKey);
+            $hasStripped=(bool)($materialData["stripped"] ?? false);
 
-                $blockName =
-                    $materialData["name"] . " " . $variantData["name"];
+            $strippedMaterials=$hasStripped
+                ? TreeMaterialCatalog::create($materialKey,true)
+                : [];
 
-                $hardness = (float) $materialData["hardness"];
-                $gravity = (bool) ($materialData["gravity"] ?? false);
+            foreach($variants as $variantKey=>$variantData){
+                $blockName=$materialData["name"]." ".$variantData["name"];
 
-				$blockId=BlockTypeIds::newId();
-
-				$blockMaterials=TreeMaterialCatalog::create($materialKey);
-				$strippedMaterials=($materialData["stripped"] ?? false)
-					? TreeMaterialCatalog::create($materialKey,true)
-					: [];
-
-				CustomiesBlockFactory::getInstance()->registerBlock(
-					static function() use (
-						$blockId,
-						$variantData,
-						$blockName,
-						$hardness,
-						$gravity,
-						$blockMaterials,
-						$strippedMaterials
-					): ConfiguredTreeBlock{
-						return new ConfiguredTreeBlock(
-							new BlockIdentifier($blockId),
-							[
-								...$variantData,
-								"name"=>$blockName
-							],
-							$blockMaterials,
-							$strippedMaterials,
-							$hardness,
-							$gravity
-						);
-					},
-					$blockIdentifier,
-					new CreativeInventoryInfo(CreativeInventoryInfo::CATEGORY_ALL)
-				);
-
-                $itemIdentifier =
-                    "pluginfd:place_" . $family . "_" . $materialKey . "_" . $variantKey;
-
-                $itemId = ItemTypeIds::newId();
-                $icon = $blockIdentifier;
-
-                CustomiesItemFactory::getInstance()->registerItem(
-                    static function() use (
-                        $itemId,
-                        $blockName,
-                        $icon,
-                        $blockIdentifier
-                    ): VoxelPlaceItem{
-
-                        return new VoxelPlaceItem(
-                            new ItemIdentifier($itemId),
-                            $blockName,
-                            $icon,
-                            $blockIdentifier
-                        );
-                    },
-                    $itemIdentifier,
-                    new CreativeInventoryInfo(
-                        CreativeInventoryInfo::CATEGORY_CONSTRUCTION
-                    )
+                self::registerOne(
+                    $family,
+                    $materialKey,
+                    $variantKey,
+                    $variantData,
+                    $blockName,
+                    $hardness,
+                    $gravity,
+                    $blockMaterials,
+                    ""
                 );
 
                 ++$registered;
+                self::reportProgress(
+                    $progress,
+                    $registered,
+                    $total,
+                    $logEvery,
+                    $startTime,
+                    $family,
+                    $materialKey,
+                    $variantKey
+                );
 
-                if($logEvery > 0 && $registered % $logEvery === 0){
-
-                    $elapsed = round(
-                        microtime(true) - $startTime,
-                        2
+                if($hasStripped){
+                    self::registerOne(
+                        $family,
+                        $materialKey,
+                        $variantKey,
+                        $variantData,
+                        $blockName." без коры",
+                        $hardness,
+                        $gravity,
+                        $strippedMaterials,
+                        "_stripped"
                     );
 
-                    $progress?->__invoke(
-                        "[{$family}] {$registered}/{$total} | " .
-                        "{$materialKey} + {$variantKey} | {$elapsed} сек."
+                    ++$registered;
+                    self::reportProgress(
+                        $progress,
+                        $registered,
+                        $total,
+                        $logEvery,
+                        $startTime,
+                        $family,
+                        $materialKey,
+                        $variantKey."_stripped"
                     );
                 }
             }
         }
 
-        $elapsed = round(
-            microtime(true) - $startTime,
-            2
-        );
+        $elapsed=round(microtime(true)-$startTime,2);
 
         $progress?->__invoke(
-            "Регистрация {$family} завершена: {$registered}/{$total}. " .
+            "Регистрация {$family} завершена: {$registered}/{$total}. ".
             "Время: {$elapsed} сек."
+        );
+    }
+
+    private static function registerOne(
+        string $family,
+        string $materialKey,
+        string $variantKey,
+        array $variantData,
+        string $blockName,
+        float $hardness,
+        bool $gravity,
+        array $materials,
+        string $suffix
+    ): void{
+        $blockIdentifier=
+            "pluginfd:".$family."_".$materialKey."_".$variantKey.$suffix;
+
+        $blockId=BlockTypeIds::newId();
+
+        CustomiesBlockFactory::getInstance()->registerBlock(
+            static function() use(
+                $blockId,
+                $variantData,
+                $blockName,
+                $hardness,
+                $gravity,
+                $materials
+            ): ConfiguredTreeBlock{
+                return new ConfiguredTreeBlock(
+                    new BlockIdentifier($blockId),
+                    [
+                        ...$variantData,
+                        "name"=>$blockName
+                    ],
+                    $materials,
+                    $hardness,
+                    $gravity
+                );
+            },
+            $blockIdentifier,
+            new CreativeInventoryInfo(
+                CreativeInventoryInfo::CATEGORY_ALL
+            )
+        );
+
+        $itemIdentifier=
+            "pluginfd:place_".$family."_".$materialKey."_".$variantKey.$suffix;
+
+        $itemId=ItemTypeIds::newId();
+
+        CustomiesItemFactory::getInstance()->registerItem(
+            static function() use(
+                $itemId,
+                $blockName,
+                $blockIdentifier
+            ): VoxelPlaceItem{
+                return new VoxelPlaceItem(
+                    new ItemIdentifier($itemId),
+                    $blockName,
+                    $blockIdentifier,
+                    $blockIdentifier
+                );
+            },
+            $itemIdentifier,
+            new CreativeInventoryInfo(
+                CreativeInventoryInfo::CATEGORY_CONSTRUCTION
+            )
+        );
+    }
+
+    private static function reportProgress(
+        ?callable $progress,
+        int $registered,
+        int $total,
+        int $logEvery,
+        float $startTime,
+        string $family,
+        string $materialKey,
+        string $variantKey
+    ): void{
+        if($logEvery <= 0 || $registered % $logEvery !== 0){
+            return;
+        }
+
+        $elapsed=round(microtime(true)-$startTime,2);
+
+        $progress?->__invoke(
+            "[{$family}] {$registered}/{$total} | ".
+            "{$materialKey} + {$variantKey} | {$elapsed} сек."
         );
     }
 }
