@@ -72,7 +72,8 @@ class pluginfd extends PluginBase{
 			"tuff_d" 		=> ["name" => "Tuff_d", 		"hardness" => 0.3, "gravity" => false],
 			"tuff_e" 		=> ["name" => "Tuff_e", 		"hardness" => 0.3, "gravity" => false],
 			
-			"stone" 		=> ["name" => "Stone", 			"hardness" => 1.5, "gravity" => false]
+			"stone" 		=> ["name" => "Stone", 			"hardness" => 1.5, "gravity" => false],
+			"ferrum" 		=> ["name" => "Ferrum", 		"hardness" => 1.5, "gravity" => false]
 		]; */
 		
 		$materialsres = [
