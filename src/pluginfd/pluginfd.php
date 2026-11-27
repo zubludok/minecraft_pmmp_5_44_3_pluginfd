@@ -35,7 +35,12 @@ class pluginfd extends PluginBase{
 			"sandstone_a" 	=> ["name" => "Sandstone_a", 	"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered"],
 			"sandstone_b" 	=> ["name" => "Sandstone_b", 	"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered"],
 			"sandstone_c" 	=> ["name" => "Sandstone_c", 	"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered"],
-			"sandstone_d" 	=> ["name" => "Sandstone_d", 	"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered"]
+			"sandstone_d" 	=> ["name" => "Sandstone_d", 	"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered"],
+			"basalt_a" 		=> ["name" => "Basalt_a", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"columnar"],
+			"basalt_b" 		=> ["name" => "Basalt_b", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"columnar"],
+			"basalt_c" 		=> ["name" => "Basalt_c", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cubev"],
+			"basalt_d" 		=> ["name" => "Basalt_d", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cubev"],
+			"basalt_e" 		=> ["name" => "Basalt_e", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"columnar"]
 		];
 		
 /*		$materials = [
@@ -128,13 +133,13 @@ class pluginfd extends PluginBase{
 		); */
 		
 		// Регистрция блоков дерева
-		TreeBlockRegistrar::registerFamily(
+/* 		TreeBlockRegistrar::registerFamily(
 			"tree",
 			$treeMaterials,
 			TreeVariantCatalog::getVariants(),
 			$progress,
 			10
-		);
+		); */
 		
 		// Установка воксельных блоков
 		$this->getServer()->getPluginManager()->registerEvents(

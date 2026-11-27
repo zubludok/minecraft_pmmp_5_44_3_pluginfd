@@ -175,7 +175,6 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
 			return null;
 		}
 
-		// Для слоистых блоков определяем крайний существующий слой.
 		if($this->voxelType==="layered" || $this->voxelType==="layered_half"){
 			if($y>=1.0){
 				return $this->getOuterLayerBit(true);
@@ -190,33 +189,35 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
 		$y=max(0.0,min(0.999999,$y));
 		$z=max(0.0,min(0.999999,$z));
 
-		$east=$x>=0.5;
+		$east=$x<0.5;
 		$south=$z>=0.5;
 
-		// Порядок направлений:
-		// 0 - north-east
-		// 1 - east-south
-		// 2 - south-west
-		// 3 - west-north
-		$corner=$east?($south?1:0):($south?2:3);
+		// Порядок: NW, SW, NE, SE.
+		$corner=!$east
+			?($south?1:0)
+			:($south?3:2);
 
 		return match($this->voxelType){
+			// Верхние кости: 0-3, нижние: 4-7.
 			"cubev"=>
-				($y>=0.5?4:0)+$corner,
+				($y>=7/16?0:4)+$corner,
 
+			// Слои с учётом фактических координат геометрии.
 			"layered"=>
-				min(3,(int)floor($y*4)),
+				$y<4/16?0:
+				($y<8/16?1:
+				($y<11/16?2:3)),
 
 			"layered_half"=>
-				min(1,(int)floor($y*2)),
+				$y<7/16?0:1,
 
-			"columnar"=>
-				$corner,
+			// В текущей геометрии один столбик.
+			"columnar"=>0,
 
 			default=>null
 		};
 	}
-	
+
 	private function getOuterLayerBit(bool $top): ?int{
 		if($top){
 			for($i=$this->boneCount-1;$i>=0;--$i){
@@ -275,48 +276,51 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
 		}
 
 		if($this->voxelType==="layered"){
-			return [-8,$bit*4,-8,8,($bit+1)*4,8];
+			$bounds=[
+				[0,4],
+				[4,8],
+				[8,12],
+				[10,14]
+			];
+
+			return [-8,$bounds[$bit][0],-8,8,$bounds[$bit][1],8];
 		}
 
 		if($this->voxelType==="layered_half"){
-			return [-8,$bit*8,-8,8,($bit+1)*8,8];
+			$bounds=[
+				[0,8],
+				[6,14]
+			];
+
+			return [-8,$bounds[$bit][0],-8,8,$bounds[$bit][1],8];
 		}
 
 		if($this->voxelType==="columnar"){
-			$east=$bit===0 || $bit===1;
-			$south=$bit===1 || $bit===2;
-
-			return [
-				$east?0:-8,
-				0,
-				$south?0:-8,
-				$east?8:0,
-				16,
-				$south?8:0
-			];
+			return [-8,-2,4,-4,14,8];
 		}
 
 		// cubev:
-		// ba - north-east down
-		// bb - east-south down
-		// bc - south-west down
-		// bd - west-north down
-		// be - north-east up
-		// bf - east-south up
-		// bg - south-west up
-		// bh - west-north up
+		// 0 - верхний северо-запад
+		// 1 - верхний юго-запад
+		// 2 - верхний северо-восток
+		// 3 - верхний юго-восток
+		// 4 - нижний северо-запад
+		// 5 - нижний юго-запад
+		// 6 - нижний северо-восток
+		// 7 - нижний юго-восток
 
 		$corner=$bit%4;
-		$east=$corner===0 || $corner===1;
-		$south=$corner===1 || $corner===2;
-		$upper=$bit>=4;
+
+		$east=$corner>=2;
+		$south=$corner===1 || $corner===3;
+		$upper=$bit<4;
 
 		return [
 			$east?0:-8,
-			$upper?8:0,
+			$upper?6:0,
 			$south?0:-8,
 			$east?8:0,
-			$upper?16:8,
+			$upper?14:8,
 			$south?8:0
 		];
 	}
