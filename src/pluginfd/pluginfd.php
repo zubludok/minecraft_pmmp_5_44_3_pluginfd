@@ -30,8 +30,9 @@ class pluginfd extends PluginBase{
 
     protected function onEnable(): void{
 		$materials = [
-			"grass" 		=> ["name" => "Grass", 			"hardness" => 0.5, "gravity" => false],
-			"stone" 		=> ["name" => "Stone", 			"hardness" => 1.5, "gravity" => false]
+			"grass" 		=> ["name" => "Grass", 			"hardness" => 0.5, "gravity" => false,	"voxel"=>"cubev"],
+			"stone" 		=> ["name" => "Stone", 			"hardness" => 1.5, "gravity" => false,	"voxel"=>"cubev"],
+			"sandstone_c" 	=> ["name" => "Sandstone_c", 	"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered"]
 		];
 		
 /*		$materials = [
@@ -105,11 +106,10 @@ class pluginfd extends PluginBase{
 		
 		$progress = fn(string $message) => $this->getLogger()->info($message);
 
-		// Регистрация обычных воксельных блоков.
+		// Регистрация воксельных блоков.
 		BlockRegistrar::registerFamily(
 			"voxel",
 			$materials,
-			VoxelCatalog::getVariants(),
 			$progress,
 			50
 		);
