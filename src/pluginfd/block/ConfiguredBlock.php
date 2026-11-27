@@ -209,7 +209,12 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
 			"layered_half"=>
 				$y<7/16?0:1,
 
-			"columnar"=>$corner,
+			"columnar"=>match($corner){
+				0=>3,
+				1=>2,
+				2=>0,
+				3=>1
+			},
 
 			default=>null
 		};
@@ -293,7 +298,13 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
 		}
 
 		if($this->voxelType==="columnar"){
-			$corner=$bit;
+			$corner=match($bit){
+				0=>2,
+				1=>3,
+				2=>1,
+				3=>0
+			};
+
 			$east=$corner>=2;
 			$south=$corner===1 || $corner===3;
 
