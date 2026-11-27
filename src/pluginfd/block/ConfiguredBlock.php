@@ -68,7 +68,7 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
 		$this->boneCount=count($this->bones);
 
 		$this->maxMask=$this->boneCount===0?1:(1<<$this->boneCount)-1;
-		$this->mask=$this->maxMask;
+		$this->mask=$voxelType==="cuber"?0:$this->maxMask;
 
 		// Родительский конструктор вызывает describeBlockOnlyState().
 		parent::__construct(
@@ -206,7 +206,7 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
 		return match($this->voxelType){
 			"cubev"=>
 				($y>=7/16?0:4)+$corner,
-
+			"cuber"=>$this->getActiveBoneBit(),
 			"layered"=>
 				$y<4/16?0:
 				($y<8/16?1:
@@ -425,4 +425,14 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
             $this->addPermutation(new BlockPermutation($condition,[$collision,$liquid]));
         }
     }
+	
+	private function getActiveBoneBit(): ?int{
+		for($bit=0;$bit<$this->boneCount;++$bit){
+			if(($this->mask&(1<<$bit))!==0){
+				return $bit;
+			}
+		}
+
+		return null;
+	}
 }

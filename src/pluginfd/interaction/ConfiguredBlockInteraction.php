@@ -53,11 +53,6 @@ final class ConfiguredBlockInteraction{
             }
 
 			$newBlock=clone $block;
-
-			$newMask=$block->getVoxelType()==="cuber"
-				?(1<<$bit)
-				:($mask|(1<<$bit));
-
 			$newBlock->setMask($newMask);
 
             $player->getWorld()->setBlock(
@@ -102,8 +97,13 @@ final class ConfiguredBlockInteraction{
 
         $event->cancel();
 
-        $newBlock=clone $block;
-        $newBlock->setMask($mask|(1<<$bit));
+		$newBlock=clone $block;
+
+		$newMask=$block->getVoxelType()==="cuber"
+			?(1<<$bit)
+			:($mask|(1<<$bit));
+
+		$newBlock->setMask($newMask);
 
         $player->getWorld()->setBlock(
             $block->getPosition(),
