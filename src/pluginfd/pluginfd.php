@@ -32,7 +32,10 @@ class pluginfd extends PluginBase{
 		$materials = [
 			"grass" 		=> ["name" => "Grass", 			"hardness" => 0.5, "gravity" => false,	"voxel"=>"cubev"],
 			"stone" 		=> ["name" => "Stone", 			"hardness" => 1.5, "gravity" => false,	"voxel"=>"cubev"],
-			"sandstone_c" 	=> ["name" => "Sandstone_c", 	"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered"]
+			"sandstone_a" 	=> ["name" => "Sandstone_a", 	"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered"],
+			"sandstone_b" 	=> ["name" => "Sandstone_b", 	"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered"],
+			"sandstone_c" 	=> ["name" => "Sandstone_c", 	"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered"],
+			"sandstone_d" 	=> ["name" => "Sandstone_d", 	"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered"]
 		];
 		
 /*		$materials = [
@@ -114,7 +117,7 @@ class pluginfd extends PluginBase{
 			50
 		);
 
-		// Регистрация ресурсных воксельных блоков.
+/* 		// Регистрация ресурсных воксельных блоков.
 		ResourceBlockRegistrar::registerFamily(
 			"resource",
 			$materialsres,
@@ -122,8 +125,9 @@ class pluginfd extends PluginBase{
 			ResourceVoxelCatalog::getVariants(),
 			$progress,
 			10
-		);
+		); */
 		
+		// Регистрция блоков дерева
 		TreeBlockRegistrar::registerFamily(
 			"tree",
 			$treeMaterials,
@@ -131,6 +135,7 @@ class pluginfd extends PluginBase{
 			$progress,
 			10
 		);
+		
 		// Установка воксельных блоков
 		$this->getServer()->getPluginManager()->registerEvents(
 			new VoxelPlaceListener(),

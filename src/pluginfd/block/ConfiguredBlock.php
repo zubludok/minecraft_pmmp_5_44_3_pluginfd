@@ -170,32 +170,71 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
     /**
      * Возвращает бит кости по локальным координатам внутри блока.
      */
-    public function getBoneBitAt(float $x,float $y,float $z): ?int{
-        if($this->boneCount===0){
-            return null;
-        }
+	public function getBoneBitAt(float $x,float $y,float $z): ?int{
+		if($this->boneCount===0){
+			return null;
+		}
 
-        $x=max(0.0,min(0.999999,$x));
-        $y=max(0.0,min(0.999999,$y));
-        $z=max(0.0,min(0.999999,$z));
+		// Для слоистых блоков определяем крайний существующий слой.
+		if($this->voxelType==="layered" || $this->voxelType==="layered_half"){
+			if($y>=1.0){
+				return $this->getOuterLayerBit(true);
+			}
 
-        return match($this->voxelType){
-            "cubev"=>
-                ($y>=0.5?0:4)+($z>=0.5?2:0)+($x>=0.5?1:0),
+			if($y<=0.0){
+				return $this->getOuterLayerBit(false);
+			}
+		}
 
-            "layered"=>
-                min(3,(int)floor($y*4)),
+		$x=max(0.0,min(0.999999,$x));
+		$y=max(0.0,min(0.999999,$y));
+		$z=max(0.0,min(0.999999,$z));
 
-            "layered_half"=>
-                min(1,(int)floor($y*2)),
+		$east=$x>=0.5;
+		$south=$z>=0.5;
 
-            "columnar"=>
-                ($z>=0.5?2:0)+($x>=0.5?1:0),
+		// Порядок направлений:
+		// 0 - north-east
+		// 1 - east-south
+		// 2 - south-west
+		// 3 - west-north
+		$corner=$east?($south?1:0):($south?2:3);
 
-            default=>null
-        };
-    }
+		return match($this->voxelType){
+			"cubev"=>
+				($y>=0.5?4:0)+$corner,
 
+			"layered"=>
+				min(3,(int)floor($y*4)),
+
+			"layered_half"=>
+				min(1,(int)floor($y*2)),
+
+			"columnar"=>
+				$corner,
+
+			default=>null
+		};
+	}
+	
+	private function getOuterLayerBit(bool $top): ?int{
+		if($top){
+			for($i=$this->boneCount-1;$i>=0;--$i){
+				if(($this->mask&(1<<$i))!==0){
+					return $i;
+				}
+			}
+		}else{
+			for($i=0;$i<$this->boneCount;++$i){
+				if(($this->mask&(1<<$i))!==0){
+					return $i;
+				}
+			}
+		}
+
+		return null;
+	}
+	
     /**
      * Для слоистых блоков разрешено снимать только крайние слои.
      */
@@ -230,49 +269,57 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
      *
      * @return array{float,float,float,float,float,float}
      */
-    private function getBoneBounds(int $bit): array{
-        if($this->voxelType==="cube"){
-            return [-8,0,-8,8,16,8];
-        }
+	private function getBoneBounds(int $bit): array{
+		if($this->voxelType==="cube"){
+			return [-8,0,-8,8,16,8];
+		}
 
-        if($this->voxelType==="layered"){
-            return [-8,$bit*4,-8,8,($bit+1)*4,8];
-        }
+		if($this->voxelType==="layered"){
+			return [-8,$bit*4,-8,8,($bit+1)*4,8];
+		}
 
-        if($this->voxelType==="layered_half"){
-            return [-8,$bit*8,-8,8,($bit+1)*8,8];
-        }
+		if($this->voxelType==="layered_half"){
+			return [-8,$bit*8,-8,8,($bit+1)*8,8];
+		}
 
-        if($this->voxelType==="columnar"){
-            $corner=$bit;
-            $east=($corner%2)===1;
-            $south=$corner>=2;
+		if($this->voxelType==="columnar"){
+			$east=$bit===0 || $bit===1;
+			$south=$bit===1 || $bit===2;
 
-            return [
-                $east?0:-8,
-                0,
-                $south?0:-8,
-                $east?8:0,
-                16,
-                $south?8:0
-            ];
-        }
+			return [
+				$east?0:-8,
+				0,
+				$south?0:-8,
+				$east?8:0,
+				16,
+				$south?8:0
+			];
+		}
 
-        // cubev: верхние четыре кости, затем нижние четыре.
-        $corner=$bit%4;
-        $east=($corner%2)===1;
-        $south=$corner>=2;
-        $upper=$bit<4;
+		// cubev:
+		// ba - north-east down
+		// bb - east-south down
+		// bc - south-west down
+		// bd - west-north down
+		// be - north-east up
+		// bf - east-south up
+		// bg - south-west up
+		// bh - west-north up
 
-        return [
-            $east?0:-8,
-            $upper?8:0,
-            $south?0:-8,
-            $east?8:0,
-            $upper?16:8,
-            $south?8:0
-        ];
-    }
+		$corner=$bit%4;
+		$east=$corner===0 || $corner===1;
+		$south=$corner===1 || $corner===2;
+		$upper=$bit>=4;
+
+		return [
+			$east?0:-8,
+			$upper?8:0,
+			$south?0:-8,
+			$east?8:0,
+			$upper?16:8,
+			$south?8:0
+		];
+	}
 
     protected function recalculateCollisionBoxes(): array{
         $boxes=[];

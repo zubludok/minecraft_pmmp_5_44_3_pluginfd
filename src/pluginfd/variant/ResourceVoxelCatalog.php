@@ -27,7 +27,7 @@ final class ResourceVoxelCatalog{
                 "geometry" => "geometry.voxel_res.large"
             ],
             [
-                "suffix" => "small_n",
+                "suffix" => "sn",
                 "size" => 0.2,
                 "style" => "nugget",
                 "geometry" => "geometry.voxel_res.small"

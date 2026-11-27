@@ -108,39 +108,70 @@ final class ConfiguredBlockInteraction{
         $player->sendMessage("§aAdded bone: §f".$bit);
     }
 
-    private function getBoneBit(
-        PlayerInteractEvent $event,
-        Player $player
-    ): ?int{
-        $block=$event->getBlock();
-        $position=$block->getPosition();
+	private function getBoneBit(
+		PlayerInteractEvent $event,
+		Player $player
+	): ?int{
+		$block=$event->getBlock();
+		$position=$block->getPosition();
+		$face=$event->getFace();
 
-        if($event->getAction()===PlayerInteractEvent::RIGHT_CLICK_BLOCK){
-            $touch=$event->getTouchVector();
+		// Для слоистых блоков сверху и снизу выбираем
+		// ближайший существующий крайний слой.
+		if(
+			$event->getAction()===PlayerInteractEvent::LEFT_CLICK_BLOCK &&
+			in_array($block->getVoxelType(),["layered","layered_half"],true)
+		){
+			$mask=$block->getMask();
+			$count=$block->getBoneCount();
 
-            $hit=new Vector3(
-                $position->x+$touch->x,
-                $position->y+$touch->y,
-                $position->z+$touch->z
-            );
-        }else{
-            $hit=$this->getRayHit(
-                $player,
-                $position,
-                $event->getFace()
-            );
+			if($face===Facing::UP){
+				for($bit=$count-1;$bit>=0;--$bit){
+					if(($mask&(1<<$bit))!==0){
+						return $bit;
+					}
+				}
 
-            if($hit===null){
-                return null;
-            }
-        }
+				return null;
+			}
 
-        return $block->getBoneBitAt(
-            $hit->x-$position->x,
-            $hit->y-$position->y,
-            $hit->z-$position->z
-        );
-    }
+			if($face===Facing::DOWN){
+				for($bit=0;$bit<$count;++$bit){
+					if(($mask&(1<<$bit))!==0){
+						return $bit;
+					}
+				}
+
+				return null;
+			}
+		}
+
+		if($event->getAction()===PlayerInteractEvent::RIGHT_CLICK_BLOCK){
+			$touch=$event->getTouchVector();
+
+			$hit=new Vector3(
+				$position->x+$touch->x,
+				$position->y+$touch->y,
+				$position->z+$touch->z
+			);
+		}else{
+			$hit=$this->getRayHit(
+				$player,
+				$position,
+				$face
+			);
+
+			if($hit===null){
+				return null;
+			}
+		}
+
+		return $block->getBoneBitAt(
+			$hit->x-$position->x,
+			$hit->y-$position->y,
+			$hit->z-$position->z
+		);
+	}
 
     private function getRayHit(
         Player $player,
