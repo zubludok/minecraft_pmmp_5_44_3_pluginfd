@@ -9,6 +9,7 @@ use customiesdevs\customies\item\CreativeInventoryInfo;
 use customiesdevs\customies\item\CustomiesItemFactory;
 
 use pluginfd\block\ConfiguredBlock;
+use pluginfd\block\VoxelPlaceholderBlock;
 use pluginfd\item\VoxelPlaceItem;
 use pluginfd\material\BlockMaterialCatalog;
 use pluginfd\variant\VoxelCatalog;
@@ -39,6 +40,12 @@ final class BlockRegistrar{
 
             if($voxelType===""){
                 throw new \InvalidArgumentException("Voxel type is not defined for material: ".$materialKey);
+            }
+
+            $placement=strtolower(trim((string)($materialData["placement"]??"icon")));
+
+            if(!in_array($placement,["block","icon"],true)){
+                throw new \InvalidArgumentException("Unknown placement type: ".$placement);
             }
 
             $profile=VoxelCatalog::getProfile($voxelType);
@@ -76,31 +83,56 @@ final class BlockRegistrar{
                 new CreativeInventoryInfo(CreativeInventoryInfo::CATEGORY_ALL)
             );
 
-            $itemIdentifier="pluginfd:place_".$family."_".$materialKey."_".$voxelType;
-            $itemId=ItemTypeIds::newId();
+            if($placement==="icon"){
+                $itemIdentifier="pluginfd:place_".$family."_".$materialKey."_".$voxelType;
+                $itemId=ItemTypeIds::newId();
 
-            CustomiesItemFactory::getInstance()->registerItem(
-                static function() use(
-                    $itemId,
-                    $blockName,
-                    $blockIdentifier
-                ): VoxelPlaceItem{
-                    return new VoxelPlaceItem(
-                        new ItemIdentifier($itemId),
+                CustomiesItemFactory::getInstance()->registerItem(
+                    static function() use(
+                        $itemId,
                         $blockName,
-                        $blockIdentifier,
                         $blockIdentifier
-                    );
-                },
-                $itemIdentifier,
-                new CreativeInventoryInfo(CreativeInventoryInfo::CATEGORY_CONSTRUCTION)
-            );
+                    ): VoxelPlaceItem{
+                        return new VoxelPlaceItem(
+                            new ItemIdentifier($itemId),
+                            $blockName,
+                            $blockIdentifier,
+                            $blockIdentifier
+                        );
+                    },
+                    $itemIdentifier,
+                    new CreativeInventoryInfo(CreativeInventoryInfo::CATEGORY_CONSTRUCTION)
+                );
+            }else{
+                $placeholderIdentifier="pluginfd:placeholder_".$family."_".$materialKey."_".$voxelType;
+                $placeholderId=BlockTypeIds::newId();
+
+                VoxelPlaceholderBlock::bind($placeholderId,$blockIdentifier);
+
+                CustomiesBlockFactory::getInstance()->registerBlock(
+                    static function() use(
+                        $placeholderId,
+                        $blockName,
+                        $materialKey,
+                        $hardness
+                    ): VoxelPlaceholderBlock{
+                        return new VoxelPlaceholderBlock(
+                            new BlockIdentifier($placeholderId),
+                            $blockName,
+                            BlockMaterialCatalog::create($materialKey),
+                            $hardness
+                        );
+                    },
+                    $placeholderIdentifier,
+                    new CreativeInventoryInfo(CreativeInventoryInfo::CATEGORY_CONSTRUCTION)
+                );
+            }
 
             ++$registered;
 
             if($logEvery>0 && $registered%$logEvery===0){
                 $elapsed=round(microtime(true)-$startTime,2);
-                $progress?->__invoke("[{$family}] {$registered}/{$total} | {$materialKey} ({$voxelType}) | {$elapsed} сек.");
+                $progress?->__invoke("[{$family}] {$registered}/{$total} | {$materialKey} ({$voxelType}, {$placement}) | {$elapsed} сек.");
             }
         }
 

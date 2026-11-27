@@ -30,79 +30,82 @@ class pluginfd extends PluginBase{
 
     protected function onEnable(): void{
 		$materials = [
-			"grass" 		=> ["name" => "Grass", 			"hardness" => 0.5, "gravity" => false,	"voxel"=>"cubev"],
-			"stone" 		=> ["name" => "Stone", 			"hardness" => 1.5, "gravity" => false,	"voxel"=>"cubev"],
-			"dirt" 			=> ["name" => "Dirt", 			"hardness" => 0.5, "gravity" => false,	"voxel"=>"cubev"],
-			"sand_white" 	=> ["name" => "Sand White", 	"hardness" => 0.2, "gravity" => true,	"voxel"=>"cubev"],
- 			"sand_beige" 	=> ["name" => "Sand Beige", 	"hardness" => 0.2, "gravity" => true,	"voxel"=>"cubev"],
-			"sand_orange" 	=> ["name" => "Sand Orange", 	"hardness" => 0.2, "gravity" => true,	"voxel"=>"cubev"],
+/* 			"grass" 		=> ["name" => "Grass", 			"hardness" => 0.5, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
+			"stone" 		=> ["name" => "Stone", 			"hardness" => 1.5, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
+			"dirt" 			=> ["name" => "Dirt", 			"hardness" => 0.5, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
+			"sand_white" 	=> ["name" => "Sand White", 	"hardness" => 0.2, "gravity" => true,	"voxel"=>"cubev", "placement"=>"block"],
+ 			"sand_beige" 	=> ["name" => "Sand Beige", 	"hardness" => 0.2, "gravity" => true,	"voxel"=>"cubev", "placement"=>"block"],
+			"sand_orange" 	=> ["name" => "Sand Orange", 	"hardness" => 0.2, "gravity" => true,	"voxel"=>"cubev", "placement"=>"block"],
 			
-			"gravel" 		=> ["name" => "Gravel", 		"hardness" => 0.3, "gravity" => true,	"voxel"=>"cubev"], 
+			"gravel" 		=> ["name" => "Gravel", 		"hardness" => 0.3, "gravity" => true,	"voxel"=>"cubev", "placement"=>"block"], 
 			
-			"sandstone_a" 	=> ["name" => "Sandstone_a", 	"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered"],
-			"sandstone_b" 	=> ["name" => "Sandstone_b", 	"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered"],
-			"sandstone_c" 	=> ["name" => "Sandstone_c", 	"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered"],
-			"sandstone_d" 	=> ["name" => "Sandstone_d", 	"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered"],
+			"sandstone_a" 	=> ["name" => "Sandstone_a", 	"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered", "placement"=>"block"],
+			"sandstone_b" 	=> ["name" => "Sandstone_b", 	"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered", "placement"=>"block"],
+			"sandstone_c" 	=> ["name" => "Sandstone_c", 	"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered", "placement"=>"block"],
+			"sandstone_d" 	=> ["name" => "Sandstone_d", 	"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered", "placement"=>"block"],
 			
-			"granit_a" 		=> ["name" => "Granit_a", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube"],
- 			"granit_b" 		=> ["name" => "Granit_b", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube"],
-			"granit_c" 		=> ["name" => "Granit_c", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube"],
-			"granit_d" 		=> ["name" => "Granit_d", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube"],
-			"granit_e" 		=> ["name" => "Granit_e", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube"],
-			"granit_f" 		=> ["name" => "Granit_f", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube"],
-			"granit_g" 		=> ["name" => "Granit_g", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube"],
-			"granit_h" 		=> ["name" => "Granit_h", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube"],
-			"granit_i" 		=> ["name" => "Granit_i", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube"],
-			"granit_j" 		=> ["name" => "Granit_j", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube"],
-			"granit_k" 		=> ["name" => "Granit_k", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube"],
+			"granit_a" 		=> ["name" => "Granit_a", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube", "placement"=>"block"],
+ 			"granit_b" 		=> ["name" => "Granit_b", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube", "placement"=>"block"],
+			"granit_c" 		=> ["name" => "Granit_c", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube", "placement"=>"block"],
+			"granit_d" 		=> ["name" => "Granit_d", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube", "placement"=>"block"],
+			"granit_e" 		=> ["name" => "Granit_e", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube", "placement"=>"block"],
+			"granit_f" 		=> ["name" => "Granit_f", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube", "placement"=>"block"],
+			"granit_g" 		=> ["name" => "Granit_g", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube", "placement"=>"block"],
+			"granit_h" 		=> ["name" => "Granit_h", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube", "placement"=>"block"],
+			"granit_i" 		=> ["name" => "Granit_i", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube", "placement"=>"block"],
+			"granit_j" 		=> ["name" => "Granit_j", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube", "placement"=>"block"],
+			"granit_k" 		=> ["name" => "Granit_k", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cube", "placement"=>"block"],
 			
-			"calcite_a" 	=> ["name" => "Calcite_a", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev"],
-			"calcite_b" 	=> ["name" => "Calcite_b", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev"],
-			"calcite_c" 	=> ["name" => "Calcite_c", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev"],
-			"calcite_d" 	=> ["name" => "Calcite_d", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev"],
-			"calcite_e" 	=> ["name" => "Calcite_e", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev"],
-			"calcite_f" 	=> ["name" => "Calcite_f", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev"],
+			"calcite_a" 	=> ["name" => "Calcite_a", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
+			"calcite_b" 	=> ["name" => "Calcite_b", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
+			"calcite_c" 	=> ["name" => "Calcite_c", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
+			"calcite_d" 	=> ["name" => "Calcite_d", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
+			"calcite_e" 	=> ["name" => "Calcite_e", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
+			"calcite_f" 	=> ["name" => "Calcite_f", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
 			
-			"shales_a" 		=> ["name" => "Shales_a", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered"],
-			"shales_b" 		=> ["name" => "Shales_b", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered"],
-			"shales_c" 		=> ["name" => "Shales_c", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered"],
-			"shales_d" 		=> ["name" => "Shales_d", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered"],
-			"shales_e" 		=> ["name" => "Shales_e", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered"],
+			"shales_a" 		=> ["name" => "Shales_a", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered", "placement"=>"block"],
+			"shales_b" 		=> ["name" => "Shales_b", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered", "placement"=>"block"],
+			"shales_c" 		=> ["name" => "Shales_c", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered", "placement"=>"block"],
+			"shales_d" 		=> ["name" => "Shales_d", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered", "placement"=>"block"],
+			"shales_e" 		=> ["name" => "Shales_e", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"layered", "placement"=>"block"],
 			
-			"basalt_a" 		=> ["name" => "Basalt_a", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"columnar"],
-			"basalt_b" 		=> ["name" => "Basalt_b", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"columnar"],
-			"basalt_c" 		=> ["name" => "Basalt_c", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cubev"],
-			"basalt_d" 		=> ["name" => "Basalt_d", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cubev"],
-			"basalt_e" 		=> ["name" => "Basalt_e", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"columnar"],
+			"basalt_a" 		=> ["name" => "Basalt_a", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"columnar", "placement"=>"block"],
+			"basalt_b" 		=> ["name" => "Basalt_b", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"columnar", "placement"=>"block"],
+			"basalt_c" 		=> ["name" => "Basalt_c", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
+			"basalt_d" 		=> ["name" => "Basalt_d", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
+			"basalt_e" 		=> ["name" => "Basalt_e", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"columnar", "placement"=>"block"], */
 			
-			"marble_a" 		=> ["name" => "Marble_a", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cuber"],
-			"marble_b" 		=> ["name" => "Marble_b", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cuber"],
-			"marble_c" 		=> ["name" => "Marble_c", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cuber"],
-			"marble_d" 		=> ["name" => "Marble_d", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cuber"],
-			"marble_e" 		=> ["name" => "Marble_e", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cuber"],
-			"marble_f" 		=> ["name" => "Marble_f", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cuber"],
+			"marble_a" 		=> ["name" => "Marble_a", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cuber", "placement"=>"block"]]/* ,
+			"marble_b" 		=> ["name" => "Marble_b", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cuber", "placement"=>"block"],
+			"marble_c" 		=> ["name" => "Marble_c", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cuber", "placement"=>"block"],
+			"marble_d" 		=> ["name" => "Marble_d", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cuber", "placement"=>"block"],
+			"marble_e" 		=> ["name" => "Marble_e", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cuber", "placement"=>"block"],
+			"marble_f" 		=> ["name" => "Marble_f", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cuber", "placement"=>"block"],
 			
-			"tuff_a" 		=> ["name" => "Tuff_a", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev"],
-			"tuff_b" 		=> ["name" => "Tuff_b", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev"],
-			"tuff_c" 		=> ["name" => "Tuff_c", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev"],
-			"tuff_d" 		=> ["name" => "Tuff_d", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev"],
-			"tuff_e" 		=> ["name" => "Tuff_e", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev"],
+			"tuff_a" 		=> ["name" => "Tuff_a", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
+			"tuff_b" 		=> ["name" => "Tuff_b", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
+			"tuff_c" 		=> ["name" => "Tuff_c", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
+			"tuff_d" 		=> ["name" => "Tuff_d", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
+			"tuff_e" 		=> ["name" => "Tuff_e", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
 			
-			"ferrum" 		=> ["name" => "Ferrum", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cubev"]
+			"ferrum" 		=> ["name" => "Ferrum", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cubev"] */
 		];
 		
-		$materialsres = [
-			"stone" 		=> ["name" => "Stone", 			"hardness" => 1.5, "gravity" => false]
+
+		$resourceMaterials=[
+			"stone_ferrum"=>[
+				"base"=>["key"=>"stone","name"=>"Stone","hardness"=>1.5,"gravity"=>false],
+				"resource"=>["key"=>"ferrum","name"=>"Ferrum"],"placement"=>"block"
+			],
+			"stone_cuprum"=>[
+				"base"=>["key"=>"stone","name"=>"Stone","hardness"=>1.5,"gravity"=>false],
+				"resource"=>["key"=>"cuprum","name"=>"Cuprum"],"placement"=>"block"
+			]
 		];
+
 		
 		$treeMaterials=[
 			"oak"	=>	["name"	=>	"Oak",	"hardness"	=>	1.5,	"gravity"	=>	false,	"stripped"	=>	true]
-		];
-		
-		$resources = [
-			"ferrum" => ["name" => "Ferrum"]
-			// ,"cuprum" => ["name" => "Cuprum"],
-			// "aurum" => ["name" => "Aurum"]
 		];
 		
 		$this->getServer()->getPluginManager()->registerEvents(
@@ -127,16 +130,15 @@ class pluginfd extends PluginBase{
 			$progress,
 			50
 		);
-
-/* 		// Регистрация ресурсных воксельных блоков.
+		
+		// Регистрация ресурсных воксельных блоков.
 		ResourceBlockRegistrar::registerFamily(
 			"resource",
-			$materialsres,
-			$resources,
+			$resourceMaterials,
 			ResourceVoxelCatalog::getVariants(),
 			$progress,
 			10
-		); */
+		);
 		
 		// Регистрция блоков дерева
 /* 		TreeBlockRegistrar::registerFamily(

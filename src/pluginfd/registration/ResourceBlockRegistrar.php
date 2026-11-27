@@ -9,7 +9,9 @@ use customiesdevs\customies\item\CreativeInventoryInfo;
 use customiesdevs\customies\item\CustomiesItemFactory;
 
 use pluginfd\block\ConfiguredResourceBlock;
+use pluginfd\block\VoxelPlaceholderBlock;
 use pluginfd\item\VoxelPlaceItem;
+use pluginfd\material\BlockMaterialCatalog;
 use pluginfd\material\ResourceMaterialCatalog;
 
 use pocketmine\block\BlockIdentifier;
@@ -22,107 +24,148 @@ final class ResourceBlockRegistrar{
     public static function registerFamily(
         string $family,
         array $materials,
-        array $resources,
         array $resourceVariants,
-        ?callable $progress = null,
-        int $logEvery = 10
+        ?callable $progress=null,
+        int $logEvery=10
     ): void{
-        $total = count($materials) * count($resources) * count($resourceVariants);
-        $registered = 0;
-        $startTime = microtime(true);
+        $total=count($materials)*count($resourceVariants);
+        $registered=0;
+        $startTime=microtime(true);
+
         $progress?->__invoke("Начало регистрации {$family}. Всего блоков: {$total}");
-        foreach($materials as $materialKey => $materialData){
-            $progress?->__invoke("Обработка материала: {$materialKey}");
-            foreach($resources as $resourceKey => $resourceData){
-                $progress?->__invoke("Ресурс: {$resourceKey} | Основа: {$materialKey}");
-                foreach($resourceVariants as $resourceVariant){
-                    $variantSuffix = $resourceVariant["suffix"];
-                    $blockIdentifier ="pluginfd:".$family."_".$materialKey."_".$resourceKey."_".$variantSuffix;
-                    $blockName = $materialData["name"]." ".$resourceData["name"]." ".$variantSuffix;
-                    $geometry = $resourceVariant["geometry"];
-                    $hardness = (float) $materialData["hardness"];
-                    $gravity = (bool) ($materialData["gravity"] ?? false);
-                    $resourceSize = (float) $resourceVariant["size"];
-                    $resourceStyle = $resourceVariant["style"];
-					$blockStartedAt=microtime(true);
-                    $blockId = BlockTypeIds::newId();
-					$blockRegistrationStartedAt=microtime(true);
-					CustomiesBlockFactory::getInstance()->registerBlock(
-						static function() use (
-							$blockId,
-							$blockName,
-							$geometry,
-							$hardness,
-							$gravity,
-							$resourceSize,
-							$materialKey,
-							$resourceKey,
-							$resourceStyle
-						): ConfiguredResourceBlock{
-							$blockMaterials = ResourceMaterialCatalog::create(
-								$materialKey,
-								$resourceKey,
-								$resourceStyle
-							);
-							return new ConfiguredResourceBlock(
-								new BlockIdentifier($blockId),
-								$blockName,
-								$geometry,
-								$blockMaterials,
-								$hardness,
-								$gravity,
-								$resourceSize,
-								$materialKey
-							);
-						},
-						$blockIdentifier,
-						new CreativeInventoryInfo(CreativeInventoryInfo::CATEGORY_ALL)
-					);
-					$blockRegistrationMs=(microtime(true)-$blockRegistrationStartedAt)*1000;
-                    $itemIdentifier = "pluginfd:place_".$family."_".$materialKey."_".$resourceKey."_".$variantSuffix;
-                    $itemId = ItemTypeIds::newId();
-                    $icon = $blockIdentifier;
-					$itemRegistrationStartedAt=microtime(true);
+
+        foreach($materials as $pairKey=>$pairData){
+            $baseData=$pairData["base"]??[];
+            $resourceData=$pairData["resource"]??[];
+
+            $materialKey=(string)($baseData["key"]??"");
+            $resourceKey=(string)($resourceData["key"]??"");
+
+            if($materialKey==="" || $resourceKey===""){
+                throw new \InvalidArgumentException("Base or resource key is missing in pair: ".$pairKey);
+            }
+
+            $placement=strtolower(trim((string)($pairData["placement"]??"icon")));
+
+            if(!in_array($placement,["block","icon"],true)){
+                throw new \InvalidArgumentException("Unknown placement type: ".$placement);
+            }
+
+            $baseName=(string)($baseData["name"]??$materialKey);
+            $resourceName=(string)($resourceData["name"]??$resourceKey);
+            $hardness=(float)($baseData["hardness"]??1.0);
+            $gravity=(bool)($baseData["gravity"]??false);
+
+            $progress?->__invoke("Обработка сочетания: {$pairKey}");
+
+            foreach($resourceVariants as $resourceVariant){
+                $variantSuffix=$resourceVariant["suffix"];
+                $blockIdentifier="pluginfd:".$family."_".$materialKey."_".$resourceKey."_".$variantSuffix;
+                $blockName=$baseName." ".$resourceName." ".$variantSuffix;
+                $geometry=$resourceVariant["geometry"];
+                $resourceSize=(float)$resourceVariant["size"];
+                $resourceStyle=$resourceVariant["style"];
+
+                $blockStartedAt=microtime(true);
+                $blockId=BlockTypeIds::newId();
+
+                CustomiesBlockFactory::getInstance()->registerBlock(
+                    static function() use(
+                        $blockId,
+                        $blockName,
+                        $geometry,
+                        $hardness,
+                        $gravity,
+                        $resourceSize,
+                        $materialKey,
+                        $resourceKey,
+                        $resourceStyle
+                    ): ConfiguredResourceBlock{
+                        return new ConfiguredResourceBlock(
+                            new BlockIdentifier($blockId),
+                            $blockName,
+                            $geometry,
+                            ResourceMaterialCatalog::create(
+                                $materialKey,
+                                $resourceKey,
+                                $resourceStyle
+                            ),
+                            $hardness,
+                            $gravity,
+                            $resourceSize,
+                            $materialKey
+                        );
+                    },
+                    $blockIdentifier,
+                    new CreativeInventoryInfo(CreativeInventoryInfo::CATEGORY_ALL)
+                );
+
+                if($placement==="icon"){
+                    $itemIdentifier="pluginfd:place_".$family."_".$materialKey."_".$resourceKey."_".$variantSuffix;
+                    $itemId=ItemTypeIds::newId();
+
                     CustomiesItemFactory::getInstance()->registerItem(
-                        static function() use (
+                        static function() use(
                             $itemId,
                             $blockName,
-                            $icon,
                             $blockIdentifier
                         ): VoxelPlaceItem{
                             return new VoxelPlaceItem(
                                 new ItemIdentifier($itemId),
                                 $blockName,
-                                $icon,
+                                $blockIdentifier,
                                 $blockIdentifier
                             );
                         },
                         $itemIdentifier,
                         new CreativeInventoryInfo(CreativeInventoryInfo::CATEGORY_CONSTRUCTION)
                     );
-					$itemRegistrationMs=(microtime(true)-$itemRegistrationStartedAt)*1000;
-                    ++$registered;
-					$totalMs=(microtime(true)-$blockStartedAt)*1000;
-					$elapsed=round(microtime(true)-$startTime,2);
+                }else{
+                    $placeholderIdentifier="pluginfd:placeholder_".$family."_".$materialKey."_".$resourceKey."_".$variantSuffix;
+                    $placeholderId=BlockTypeIds::newId();
 
-					$progress?->__invoke(sprintf(
-						"[{$family}] %d/%d | %s | блок: %.2f мс | предмет: %.2f мс | всего: %.2f мс | с начала: %.2f сек.",
-						$registered,
-						$total,
-						$blockIdentifier,
-						$blockRegistrationMs,
-						$itemRegistrationMs,
-						$totalMs,
-						$elapsed
-					));
-                    if($logEvery > 0 && $registered % $logEvery === 0){
-                        $elapsed = round(microtime(true) - $startTime, 2);
-                        $progress?->__invoke("[{$family}] {$registered}/{$total} | "."{$materialKey} + {$resourceKey} | "."{$elapsed} сек.");
-                    }
+                    VoxelPlaceholderBlock::bind($placeholderId,$blockIdentifier);
+
+                    CustomiesBlockFactory::getInstance()->registerBlock(
+                        static function() use(
+                            $placeholderId,
+                            $blockName,
+                            $materialKey,
+                            $hardness
+                        ): VoxelPlaceholderBlock{
+                            return new VoxelPlaceholderBlock(
+                                new BlockIdentifier($placeholderId),
+                                $blockName,
+                                BlockMaterialCatalog::create($materialKey),
+                                $hardness
+                            );
+                        },
+                        $placeholderIdentifier,
+                        new CreativeInventoryInfo(CreativeInventoryInfo::CATEGORY_CONSTRUCTION)
+                    );
+                }
+
+                ++$registered;
+
+                $totalMs=(microtime(true)-$blockStartedAt)*1000;
+                $elapsed=round(microtime(true)-$startTime,2);
+
+                $progress?->__invoke(sprintf(
+                    "[{$family}] %d/%d | %s | %.2f мс | с начала: %.2f сек.",
+                    $registered,
+                    $total,
+                    $blockIdentifier,
+                    $totalMs,
+                    $elapsed
+                ));
+
+                if($logEvery>0 && $registered%$logEvery===0){
+                    $progress?->__invoke("[{$family}] {$registered}/{$total} | {$pairKey} | {$elapsed} сек.");
                 }
             }
         }
-        $elapsed = round(microtime(true) - $startTime, 2);
+
+        $elapsed=round(microtime(true)-$startTime,2);
         $progress?->__invoke("Регистрация {$family} завершена: {$registered}/{$total}. Время: {$elapsed} сек.");
     }
 }
