@@ -9,40 +9,40 @@ final class ResourceVoxelCatalog{
     public static function getVariants(): array{
         return [
             [
-                "suffix" => "small_inclusions",
+                "suffix" => "si",
                 "size" => 0.2,
                 "style" => "inclusions",
-                "geometry" => "geometry.voxel_resource.small"
+                "geometry" => "geometry.voxel_res.small"
             ],
             [
-                "suffix" => "medium_inclusions",
+                "suffix" => "mi",
                 "size" => 0.4,
                 "style" => "inclusions",
-                "geometry" => "geometry.voxel_resource.medium"
+                "geometry" => "geometry.voxel_res.medium"
             ],
             [
-                "suffix" => "large_inclusions",
+                "suffix" => "li",
                 "size" => 0.6,
                 "style" => "inclusions",
-                "geometry" => "geometry.voxel_resource.large"
+                "geometry" => "geometry.voxel_res.large"
             ],
             [
-                "suffix" => "small_nugget",
+                "suffix" => "small_n",
                 "size" => 0.2,
                 "style" => "nugget",
-                "geometry" => "geometry.voxel_resource.small"
+                "geometry" => "geometry.voxel_res.small"
             ],
             [
-                "suffix" => "medium_nugget",
+                "suffix" => "mn",
                 "size" => 0.4,
                 "style" => "nugget",
-                "geometry" => "geometry.voxel_resource.medium"
+                "geometry" => "geometry.voxel_res.medium"
             ],
             [
-                "suffix" => "large_nugget",
+                "suffix" => "ln",
                 "size" => 0.6,
                 "style" => "nugget",
-                "geometry" => "geometry.voxel_resource.large"
+                "geometry" => "geometry.voxel_res.large"
             ]
         ];
     }
