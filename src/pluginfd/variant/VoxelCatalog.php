@@ -15,6 +15,10 @@ final class VoxelCatalog{
             "geometry"=>"geometry.voxel.cubev",
             "bones"=>["ba","bb","bc","bd","be","bf","bg","bh"]
         ],
+		"cuber"=>[
+			"geometry"=>"geometry.voxel_cuber",
+			"bones"=>["ba","bb","bc","bd","be","bf","bg","bh"]
+		],
         "layered"=>[
             "geometry"=>"geometry.voxel.layered",
             "bones"=>["ba","bb","bc","bd"]

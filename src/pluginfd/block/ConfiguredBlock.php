@@ -282,7 +282,9 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
 		if($this->voxelType==="cube"){
 			return [-8,0,-8,8,16,8];
 		}
-
+		if($this->voxelType==="cuber"){
+			return [-8,0,-8,8,16,8];
+		}
 		if($this->voxelType==="layered"){
 			$bounds=[
 				[0,4],

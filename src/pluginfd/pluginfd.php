@@ -40,7 +40,13 @@ class pluginfd extends PluginBase{
 			"basalt_b" 		=> ["name" => "Basalt_b", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"columnar"],
 			"basalt_c" 		=> ["name" => "Basalt_c", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cubev"],
 			"basalt_d" 		=> ["name" => "Basalt_d", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cubev"],
-			"basalt_e" 		=> ["name" => "Basalt_e", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"columnar"]
+			"basalt_e" 		=> ["name" => "Basalt_e", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"columnar"],
+			"marble_a" 		=> ["name" => "Marble_a", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cuber"],
+			"marble_b" 		=> ["name" => "Marble_b", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cuber"],
+			"marble_c" 		=> ["name" => "Marble_c", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cuber"],
+			"marble_d" 		=> ["name" => "Marble_d", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cuber"],
+			"marble_e" 		=> ["name" => "Marble_e", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cuber"],
+			"marble_f" 		=> ["name" => "Marble_f", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cuber"]
 		];
 		
 /*		$materials = [

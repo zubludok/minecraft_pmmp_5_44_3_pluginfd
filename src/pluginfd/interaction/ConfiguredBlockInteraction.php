@@ -52,8 +52,13 @@ final class ConfiguredBlockInteraction{
                 return;
             }
 
-            $newBlock=clone $block;
-            $newBlock->setMask($newMask);
+			$newBlock=clone $block;
+
+			$newMask=$block->getVoxelType()==="cuber"
+				?(1<<$bit)
+				:($mask|(1<<$bit));
+
+			$newBlock->setMask($newMask);
 
             $player->getWorld()->setBlock(
                 $block->getPosition(),
@@ -115,7 +120,23 @@ final class ConfiguredBlockInteraction{
 		$block=$event->getBlock();
 		$position=$block->getPosition();
 		$face=$event->getFace();
+		if(
+			$event->getAction()===PlayerInteractEvent::RIGHT_CLICK_BLOCK &&
+			$block->getVoxelType()==="cuber"
+		){
+			$touch=$event->getTouchVector();
+			$upper=$touch->y>=0.5;
 
+			$side=match($player->getHorizontalFacing()){
+				Facing::NORTH=>0,
+				Facing::EAST=>1,
+				Facing::SOUTH=>2,
+				Facing::WEST=>3,
+				default=>0
+			};
+
+			return ($upper?4:0)+$side;
+		}
 		// Для слоистых блоков сверху и снизу выбираем
 		// ближайший существующий крайний слой.
 		if(
