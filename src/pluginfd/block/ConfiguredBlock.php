@@ -47,38 +47,40 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
     private int $maxMask;
 
     /* @param Material[] $materials */
-    public function __construct(
-        BlockIdentifier $identifier,
-        string $name,
-        string $geometry,
-        array $materials,
-        float $hardness,
-        bool $gravity,
-        string $materialKey,
-        string $voxelType
-    ){
-        parent::__construct(
-            $identifier,
-            $name,
-            new BlockTypeInfo(new BlockBreakInfo($hardness))
-        );
 
-        $this->gravity=$gravity;
-        $this->materialKey=$materialKey;
-        $this->voxelType=$voxelType;
+	public function __construct(
+		BlockIdentifier $identifier,
+		string $name,
+		string $geometry,
+		array $materials,
+		float $hardness,
+		bool $gravity,
+		string $materialKey,
+		string $voxelType
+	){
+		// Сначала инициализируем поля, которые может запросить Block::__construct().
+		$this->gravity=$gravity;
+		$this->materialKey=$materialKey;
+		$this->voxelType=$voxelType;
 
-        $profile=VoxelCatalog::getProfile($voxelType);
-        $this->bones=$profile["bones"];
-        $this->boneCount=count($this->bones);
+		$profile=VoxelCatalog::getProfile($voxelType);
+		$this->bones=$profile["bones"];
+		$this->boneCount=count($this->bones);
 
-        // cube не имеет костей, но использует фиксированную маску 1.
-        $this->maxMask=$this->boneCount===0?1:(1<<$this->boneCount)-1;
-        $this->mask=$this->maxMask;
+		$this->maxMask=$this->boneCount===0?1:(1<<$this->boneCount)-1;
+		$this->mask=$this->maxMask;
 
-        $this->initStates();
-        $this->initComponents($geometry,$materials);
-        $this->initPermutations();
-    }
+		// Родительский конструктор вызывает describeBlockOnlyState().
+		parent::__construct(
+			$identifier,
+			$name,
+			new BlockTypeInfo(new BlockBreakInfo($hardness))
+		);
+
+		$this->initStates();
+		$this->initComponents($geometry,$materials);
+		$this->initPermutations();
+	}
 
     protected function describeBlockOnlyState(RuntimeDataDescriber $w): void{
         $w->int(max(1,$this->boneCount),$this->mask);
