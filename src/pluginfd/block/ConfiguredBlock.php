@@ -68,7 +68,7 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
 		$this->boneCount=count($this->bones);
 
 		$this->maxMask=$this->boneCount===0?1:(1<<$this->boneCount)-1;
-		$this->mask=$voxelType==="cuber"?0:$this->maxMask;
+		$this->mask=$voxelType==="cuber"?1:$this->maxMask;
 
 		// Родительский конструктор вызывает describeBlockOnlyState().
 		parent::__construct(
