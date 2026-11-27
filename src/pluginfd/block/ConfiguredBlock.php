@@ -196,7 +196,13 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
 		$corner=!$east
 			?($south?1:0)
 			:($south?3:2);
+			
+		$columnEast=$x>=0.5;
 
+		$columnCorner=!$columnEast
+			?($south?1:0)
+			:($south?3:2);
+			
 		return match($this->voxelType){
 			"cubev"=>
 				($y>=7/16?0:4)+$corner,
@@ -209,7 +215,7 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
 			"layered_half"=>
 				$y<7/16?0:1,
 
-			"columnar"=>match($corner){
+			"columnar"=>match($columnCorner){
 				0=>3,
 				1=>2,
 				2=>0,

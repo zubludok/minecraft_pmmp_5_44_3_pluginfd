@@ -166,11 +166,24 @@ final class ConfiguredBlockInteraction{
 			}
 		}
 
-		return $block->getBoneBitAt(
+		$bit=$block->getBoneBitAt(
 			$hit->x-$position->x,
 			$hit->y-$position->y,
 			$hit->z-$position->z
 		);
+
+		if(
+			$bit===null ||
+			$event->getAction()!==PlayerInteractEvent::LEFT_CLICK_BLOCK
+		){
+			return $bit;
+		}
+
+		if(($block->getMask()&(1<<$bit))!==0){
+			return $bit;
+		}
+
+		return $this->getFallbackBoneBit($block,$bit,$face);
 	}
 
     private function getRayHit(
@@ -227,4 +240,66 @@ final class ConfiguredBlockInteraction{
 
         return $hit;
     }
+	
+	private function getFallbackBoneBit(
+		ConfiguredBlock $block,
+		int $bit,
+		int $face
+	): ?int{
+		$type=$block->getVoxelType();
+		$fallback=null;
+
+		if($type==="cubev"){
+			if($face===Facing::UP){
+				$fallback=$bit+4;
+			}elseif($face===Facing::DOWN){
+				$fallback=$bit-4;
+			}elseif(in_array($face,[Facing::EAST,Facing::WEST],true)){
+				$corner=$bit%4;
+				$opposite=match($corner){
+					0=>2,
+					1=>3,
+					2=>0,
+					3=>1
+				};
+				$fallback=intdiv($bit,4)*4+$opposite;
+			}elseif(in_array($face,[Facing::NORTH,Facing::SOUTH],true)){
+				$corner=$bit%4;
+				$opposite=match($corner){
+					0=>1,
+					1=>0,
+					2=>3,
+					3=>2
+				};
+				$fallback=intdiv($bit,4)*4+$opposite;
+			}
+		}
+
+		if($type==="columnar"){
+			if(in_array($face,[Facing::EAST,Facing::WEST],true)){
+				$fallback=match($bit){
+					0=>3,
+					1=>2,
+					2=>1,
+					3=>0
+				};
+			}elseif(in_array($face,[Facing::NORTH,Facing::SOUTH],true)){
+				$fallback=match($bit){
+					0=>1,
+					1=>0,
+					2=>3,
+					3=>2
+				};
+			}
+		}
+
+		if(
+			$fallback===null ||
+			($block->getMask()&(1<<$fallback))===0
+		){
+			return null;
+		}
+
+		return $fallback;
+	}
 }
