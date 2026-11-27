@@ -198,11 +198,9 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
 			:($south?3:2);
 
 		return match($this->voxelType){
-			// Верхние кости: 0-3, нижние: 4-7.
 			"cubev"=>
 				($y>=7/16?0:4)+$corner,
 
-			// Слои с учётом фактических координат геометрии.
 			"layered"=>
 				$y<4/16?0:
 				($y<8/16?1:
@@ -211,8 +209,7 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
 			"layered_half"=>
 				$y<7/16?0:1,
 
-			// В текущей геометрии один столбик.
-			"columnar"=>0,
+			"columnar"=>$corner,
 
 			default=>null
 		};
@@ -296,7 +293,18 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
 		}
 
 		if($this->voxelType==="columnar"){
-			return [-8,-2,4,-4,14,8];
+			$corner=$bit;
+			$east=$corner>=2;
+			$south=$corner===1 || $corner===3;
+
+			return [
+				$east?0:-8,
+				0,
+				$south?0:-8,
+				$east?8:0,
+				16,
+				$south?8:0
+			];
 		}
 
 		// cubev:
