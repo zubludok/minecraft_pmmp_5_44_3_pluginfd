@@ -13,6 +13,7 @@ use pluginfd\block\VoxelPlaceholderBlock;
 use pluginfd\item\VoxelPlaceItem;
 use pluginfd\material\BlockMaterialCatalog;
 use pluginfd\variant\VoxelCatalog;
+use pluginfd\catalog\BlockCatalog;
 
 use pocketmine\block\BlockIdentifier;
 use pocketmine\block\BlockTypeIds;
@@ -84,7 +85,14 @@ final class BlockRegistrar{
                 $blockIdentifier,
                 new CreativeInventoryInfo(CreativeInventoryInfo::CATEGORY_ALL)
             );
-
+			
+			BlockCatalog::register($blockIdentifier,[
+				"family"=>$family,
+				"material"=>$materialKey,
+				"voxel"=>$voxelType,
+				"geometry"=>$geometry
+			]);
+			
             if($placement==="icon"){
                 $itemIdentifier="pluginfd:place_".$family."_".$materialKey."_".$voxelType;
                 $itemId=ItemTypeIds::newId();

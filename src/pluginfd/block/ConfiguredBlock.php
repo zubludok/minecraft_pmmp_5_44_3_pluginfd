@@ -204,16 +204,22 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
 			:($south?3:2);
 			
 		return match($this->voxelType){
-			"cubev"=>
-				($y>=7/16?0:4)+$corner,
+			"cubev"=>($y>=7/16?0:4)+$corner,
+				
 			"cuber"=>$this->getActiveBoneBit(),
+			
 			"layered"=>
 				$y<4/16?0:
 				($y<8/16?1:
 				($y<11/16?2:3)),
-
+				
 			"layered_half"=>
 				$y<7/16?0:1,
+				
+			"layeredv"=>
+				$y<4/16?0:
+				($y<8/16?1:
+				($y<11/16?2:3)),
 
 			"columnar"=>match($columnCorner){
 				0=>3,
@@ -256,7 +262,7 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
             return false;
         }
 
-        if($this->voxelType!=="layered" && $this->voxelType!=="layered_half"){
+        if($this->voxelType!=="layered" && $this->voxelType!=="layered_half" && $this->voxelType!=="layeredv"){
             return true;
         }
 
@@ -273,11 +279,8 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
         return $bit===$lowest || $bit===$highest;
     }
 
-    /**
-     * Координаты части блока в системе Bedrock: X/Z -8..8, Y 0..16.
-     *
-     * @return array{float,float,float,float,float,float}
-     */
+    /* Координаты части блока в системе Bedrock: X/Z -8..8, Y 0..16.
+     * @return array{float,float,float,float,float,float} */
 	private function getBoneBounds(int $bit): array{
 		if($this->voxelType==="cube"){
 			return [-8,0,-8,8,16,8];
@@ -292,7 +295,15 @@ final class ConfiguredBlock extends Block implements BlockComponents,BlockPermut
 				[8,12],
 				[10,14]
 			];
-
+			return [-8,$bounds[$bit][0],-8,8,$bounds[$bit][1],8];
+		}
+		if($this->voxelType==="layeredv"){
+			$bounds=[
+				[0,4],
+				[4,8],
+				[8,12],
+				[10,14]
+			];
 			return [-8,$bounds[$bit][0],-8,8,$bounds[$bit][1],8];
 		}
 

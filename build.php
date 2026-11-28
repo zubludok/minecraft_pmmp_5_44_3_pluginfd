@@ -19,6 +19,7 @@ $filesToAdd = [
     'src/pluginfd/block/ConfiguredTreeBlock.php',
     'src/pluginfd/block/TrashBlock.php',
     'src/pluginfd/block/VoxelPlaceholderBlock.php',
+    'src/pluginfd/catalog/BlockCatalog.php',
     'src/pluginfd/interaction/ConfiguredBlockInteraction.php',
     'src/pluginfd/interaction/ConfiguredResourceBlockInteraction.php',
     'src/pluginfd/interaction/ConfiguredTreeBlockInteraction.php',

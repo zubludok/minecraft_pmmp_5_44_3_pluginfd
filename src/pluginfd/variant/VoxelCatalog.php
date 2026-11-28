@@ -27,6 +27,10 @@ final class VoxelCatalog{
             "geometry"=>"geometry.voxel.layered_half",
             "bones"=>["ba","bb"]
         ],
+        "layeredv"=>[
+            "geometry"=>"geometry.voxel.layeredv",
+            "bones"=>["ba","bb","bc","bd","be","bf","bg","bh"]
+        ],
         "columnar"=>[
             "geometry"=>"geometry.voxel.columnar",
             "bones"=>["ba","bb","bc","bd"]

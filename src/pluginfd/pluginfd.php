@@ -21,6 +21,7 @@ use pluginfd\registration\TreeBlockRegistrar;
 use pluginfd\variant\ResourceVoxelCatalog;
 use pluginfd\variant\TreeVariantCatalog;
 use pluginfd\variant\VoxelCatalog;
+use pluginfd\catalog\BlockCatalog;
 
 use customiesdevs\customies\block\CustomiesBlockFactory;
 use pocketmine\block\BlockIdentifier;
@@ -30,7 +31,7 @@ class pluginfd extends PluginBase{
 
     protected function onEnable(): void{
 		$materials = [
-			"grass" 		=> ["name" => "Grass", 			"hardness" => 0.5, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"]/* ,
+			"grass" 		=> ["name" => "Grass", 			"hardness" => 0.5, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
 			"stone" 		=> ["name" => "Stone", 			"hardness" => 1.5, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
 			"dirt" 			=> ["name" => "Dirt", 			"hardness" => 0.5, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
 			"sand_white" 	=> ["name" => "Sand White", 	"hardness" => 0.2, "gravity" => true,	"voxel"=>"cubev", "placement"=>"block"],
@@ -110,18 +111,18 @@ class pluginfd extends PluginBase{
 			"tuff_d" 		=> ["name" => "Tuff_d", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
 			"tuff_e" 		=> ["name" => "Tuff_e", 		"hardness" => 0.3, "gravity" => false,	"voxel"=>"cubev", "placement"=>"block"],
 			
-			"ferrum" 		=> ["name" => "Ferrum", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cubev"] */
+			"ferrum" 		=> ["name" => "Ferrum", 		"hardness" => 1.5, "gravity" => false,	"voxel"=>"cubev"]
 		];
 		
 		$resourceMaterials=[
 			"stone_ferrum"=>[
-				"base"=>["key"=>"stone","name"=>"Stone","hardness"=>1.5,"gravity"=>false],
-				"res"=>["key"=>"ferrum","name"=>"Ferrum"],"placement"=>"block"
-			]/* ,
+				"base"	=>["key"	=>"stone",	"name"	=>"Stone",		"hardness"	=>1.5,	"gravity"	=>false],
+				"res"	=>["key"	=>"ferrum",	"name"	=>"Ferrum"],	"placement"	=>"block"
+			],
 			"stone_cuprum"=>[
-				"base"=>["key"=>"stone","name"=>"Stone","hardness"=>1.5,"gravity"=>false],
-				"resource"=>["key"=>"cuprum","name"=>"Cuprum"],"placement"=>"block"
-			] */
+				"base"	=>["key"	=>"stone",	"name"	=>"Stone",		"hardness"	=>1.5,	"gravity"	=>false],
+				"res"	=>["key"	=>"cuprum",	"name"	=>"Cuprum"],	"placement"	=>"block"
+			]
 		];
 		
 		$treeMaterials=[
@@ -186,4 +187,7 @@ class pluginfd extends PluginBase{
 
         $this->getLogger()->info("Custom blocks and items registered!");
     }
+	
+	public function getBlockCatalog(): array{return BlockCatalog::export();}
+	public function getGeologyCatalog(): array{return BlockCatalog::getGeologyCatalog();}
 }

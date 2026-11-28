@@ -11,6 +11,7 @@ use customiesdevs\customies\item\CustomiesItemFactory;
 use pluginfd\block\ConfiguredTreeBlock;
 use pluginfd\item\VoxelPlaceItem;
 use pluginfd\material\TreeMaterialCatalog;
+use pluginfd\catalog\BlockCatalog;
 
 use pocketmine\block\BlockIdentifier;
 use pocketmine\block\BlockTypeIds;
@@ -27,29 +28,18 @@ final class TreeBlockRegistrar{
         int $logEvery=10
     ): void{
         $total=0;
-
         foreach($materials as $materialData){
             $multiplier=($materialData["stripped"] ?? false) ? 2 : 1;
             $total+=count($variants)*$multiplier;
         }
-
         $registered=0;
         $startTime=microtime(true);
-
-        $progress?->__invoke(
-            "Начало регистрации {$family}. Всего блоков: {$total}"
-        );
-
+        $progress?->__invoke("Начало регистрации {$family}. Всего блоков: {$total}");
         foreach($materials as $materialKey=>$materialData){
-            $progress?->__invoke(
-                "Обработка материала: {$materialKey}"
-            );
-
+            $progress?->__invoke("Обработка материала: {$materialKey}");
             $hardness=(float)$materialData["hardness"];
             $gravity=(bool)($materialData["gravity"] ?? false);
-
 			$hasStripped=(bool)($materialData["stripped"] ?? false);
-
             foreach($variants as $variantKey=>$variantData){
                 $blockName=$materialData["name"]." ".$variantData["name"];
 				$strippedBlockIdentifier=$hasStripped
@@ -67,7 +57,6 @@ final class TreeBlockRegistrar{
 					"",
 					$strippedBlockIdentifier
                 );
-
                 ++$registered;
                 self::reportProgress(
                     $progress,
@@ -79,7 +68,6 @@ final class TreeBlockRegistrar{
                     $materialKey,
                     $variantKey
                 );
-
                 if($hasStripped){
                     self::registerOne(
                         $family,
@@ -93,7 +81,6 @@ final class TreeBlockRegistrar{
                         "_stripped",
 						null
                     );
-
                     ++$registered;
                     self::reportProgress(
                         $progress,
@@ -108,9 +95,7 @@ final class TreeBlockRegistrar{
                 }
             }
         }
-
         $elapsed=round(microtime(true)-$startTime,2);
-
         $progress?->__invoke(
             "Регистрация {$family} завершена: {$registered}/{$total}. ".
             "Время: {$elapsed} сек."
@@ -129,11 +114,8 @@ final class TreeBlockRegistrar{
 		string $suffix,
 		?string $strippedBlockIdentifier
     ): void{
-        $blockIdentifier=
-            "pluginfd:".$family."_".$materialKey."_".$variantKey.$suffix;
-
+        $blockIdentifier="pluginfd:".$family."_".$materialKey."_".$variantKey.$suffix;
         $blockId=BlockTypeIds::newId();
-
         CustomiesBlockFactory::getInstance()->registerBlock(
 			static function() use(
 				$blockId,
@@ -150,7 +132,6 @@ final class TreeBlockRegistrar{
 					$stripped,
 					$variantData["texture_suffix"] ?? ""
 				);
-
 				return new ConfiguredTreeBlock(
 					new BlockIdentifier($blockId),
 					[
@@ -164,16 +145,19 @@ final class TreeBlockRegistrar{
 				);
 			},
             $blockIdentifier,
-            new CreativeInventoryInfo(
-                CreativeInventoryInfo::CATEGORY_ALL
-            )
+            new CreativeInventoryInfo(CreativeInventoryInfo::CATEGORY_ALL)
         );
-
-        $itemIdentifier=
-            "pluginfd:place_".$family."_".$materialKey."_".$variantKey.$suffix;
-
+		BlockCatalog::register($blockIdentifier,[
+			"family"=>$family,
+			"material"=>$materialKey,
+			"role"=>"tree",
+			"voxel"=>"tree",
+			"geometry"=>$variantData["geometry"]??"",
+			"variant"=>$variantKey,
+			"stripped"=>$stripped
+		]);
+        $itemIdentifier="pluginfd:place_".$family."_".$materialKey."_".$variantKey.$suffix;
         $itemId=ItemTypeIds::newId();
-
         CustomiesItemFactory::getInstance()->registerItem(
             static function() use(
                 $itemId,
