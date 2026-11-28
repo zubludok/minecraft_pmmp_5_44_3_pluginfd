@@ -38,9 +38,9 @@ final class VoxelPlaceholderBlock extends Block implements BlockComponents{
         $this->addComponent(new CollisionBoxComponent(true));
     }
 
-    public static function bind(int $blockId,string $targetIdentifier): void{
-        self::$targets[$blockId]=$targetIdentifier;
-    }
+	public static function bind(int $itemTypeId,string $targetIdentifier): void{
+		self::$targets[$itemTypeId]=$targetIdentifier;
+	}
 
     public static function getTargetIdentifier(int $itemTypeId): ?string{
         return self::$targets[$itemTypeId]??null;

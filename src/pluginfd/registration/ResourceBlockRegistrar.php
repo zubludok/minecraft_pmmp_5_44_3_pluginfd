@@ -45,11 +45,13 @@ final class ResourceBlockRegistrar{
                 throw new \InvalidArgumentException("Base or resource key is missing in pair: ".$pairKey);
             }
 
-            $placement=strtolower(trim((string)($pairData["placement"]??"icon")));
+			$placement=isset($pairData["placement"])
+				?strtolower(trim((string)$pairData["placement"]))
+				:null;
 
-            if(!in_array($placement,["block","icon"],true)){
-                throw new \InvalidArgumentException("Unknown placement type: ".$placement);
-            }
+			if($placement!==null && !in_array($placement,["block","icon"],true)){
+				throw new \InvalidArgumentException("Unknown placement type: ".$placement);
+			}
 
             $baseName=(string)($baseData["name"]??$materialKey);
             $resourceName=(string)($resourceData["name"]??$resourceKey);
@@ -120,11 +122,9 @@ final class ResourceBlockRegistrar{
                         $itemIdentifier,
                         new CreativeInventoryInfo(CreativeInventoryInfo::CATEGORY_CONSTRUCTION)
                     );
-                }else{
+                }elseif($placement==="block"){
                     $placeholderIdentifier="pluginfd:placeholder_".$family."_".$materialKey."_".$resourceKey."_".$variantSuffix;
                     $placeholderId=BlockTypeIds::newId();
-
-                    VoxelPlaceholderBlock::bind($placeholderId,$blockIdentifier);
 
                     CustomiesBlockFactory::getInstance()->registerBlock(
                         static function() use(
@@ -143,6 +143,10 @@ final class ResourceBlockRegistrar{
                         $placeholderIdentifier,
                         new CreativeInventoryInfo(CreativeInventoryInfo::CATEGORY_CONSTRUCTION)
                     );
+					VoxelPlaceholderBlock::bind(
+						CustomiesItemFactory::getInstance()->get($placeholderIdentifier)->getTypeId(),
+						$blockIdentifier
+					);
                 }
 
                 ++$registered;

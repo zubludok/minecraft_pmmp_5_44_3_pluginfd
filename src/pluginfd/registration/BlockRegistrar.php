@@ -42,11 +42,13 @@ final class BlockRegistrar{
                 throw new \InvalidArgumentException("Voxel type is not defined for material: ".$materialKey);
             }
 
-            $placement=strtolower(trim((string)($materialData["placement"]??"icon")));
+			$placement=isset($materialData["placement"])
+				?strtolower(trim((string)$materialData["placement"]))
+				:null;
 
-            if(!in_array($placement,["block","icon"],true)){
-                throw new \InvalidArgumentException("Unknown placement type: ".$placement);
-            }
+			if($placement!==null && !in_array($placement,["block","icon"],true)){
+				throw new \InvalidArgumentException("Unknown placement type: ".$placement);
+			}
 
             $profile=VoxelCatalog::getProfile($voxelType);
             $geometry=$profile["geometry"];
@@ -103,11 +105,9 @@ final class BlockRegistrar{
                     $itemIdentifier,
                     new CreativeInventoryInfo(CreativeInventoryInfo::CATEGORY_CONSTRUCTION)
                 );
-            }else{
+            }elseif($placement==="block"){
                 $placeholderIdentifier="pluginfd:placeholder_".$family."_".$materialKey."_".$voxelType;
                 $placeholderId=BlockTypeIds::newId();
-
-                VoxelPlaceholderBlock::bind($placeholderId,$blockIdentifier);
 
                 CustomiesBlockFactory::getInstance()->registerBlock(
                     static function() use(
@@ -126,6 +126,11 @@ final class BlockRegistrar{
                     $placeholderIdentifier,
                     new CreativeInventoryInfo(CreativeInventoryInfo::CATEGORY_CONSTRUCTION)
                 );
+				// Привязка заглушки к настоящему блоку
+				VoxelPlaceholderBlock::bind(
+					CustomiesItemFactory::getInstance()->get($placeholderIdentifier)->getTypeId(),
+					$blockIdentifier
+				);
             }
 
             ++$registered;

@@ -6,6 +6,7 @@ namespace pluginfd\listener;
 
 use customiesdevs\customies\block\CustomiesBlockFactory;
 
+use pluginfd\block\ConfiguredBlock;
 use pluginfd\block\VoxelPlaceholderBlock;
 use pluginfd\item\VoxelPlaceItem;
 
@@ -13,6 +14,7 @@ use pocketmine\block\Air;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\math\Facing;
 
 final class VoxelPlaceListener implements Listener{
 
@@ -53,6 +55,29 @@ final class VoxelPlaceListener implements Listener{
         }
 
         $block=CustomiesBlockFactory::getInstance()->get($targetIdentifier);
+
+        // Определяем начальную ориентацию cuber.
+        if($block instanceof ConfiguredBlock && $block->getVoxelType()==="cuber"){
+            $touch=$event->getTouchVector();
+            $upper=$touch->y>=0.5;
+
+            $side=match($event->getFace()){
+                Facing::NORTH=>0,
+                Facing::EAST=>1,
+                Facing::SOUTH=>2,
+                Facing::WEST=>3,
+                default=>match($player->getHorizontalFacing()){
+                    Facing::NORTH=>0,
+                    Facing::EAST=>1,
+                    Facing::SOUTH=>2,
+                    Facing::WEST=>3,
+                    default=>0
+                }
+            };
+
+            $block=clone $block;
+            $block->setMask(1<<(($upper?4:0)+$side));
+        }
 
         $player->getWorld()->setBlock(
             $targetBlock->getPosition(),
