@@ -36,7 +36,7 @@ final class ResourceBlockRegistrar{
 
         foreach($materials as $pairKey=>$pairData){
             $baseData=$pairData["base"]??[];
-            $resourceData=$pairData["resource"]??[];
+            $resourceData=$pairData["res"]??[];
 
             $materialKey=(string)($baseData["key"]??"");
             $resourceKey=(string)($resourceData["key"]??"");
